@@ -1,4 +1,4 @@
-import Sequelize from "Sequelize"
+import Sequelize from "sequelize"
 
 export default (sequelize: Sequelize.Sequelize) => {
     return sequelize.define(

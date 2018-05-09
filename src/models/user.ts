@@ -1,4 +1,4 @@
-import Sequelize, { json } from "Sequelize"
+import Sequelize, { json } from "sequelize"
 
 export default (sequelize: Sequelize.Sequelize) => {
     return sequelize.define(
