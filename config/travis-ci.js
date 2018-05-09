@@ -1,14 +1,14 @@
 module.exports = {
-    env: "development",
+    env: "travis-ci",
     server: {
         host: "127.0.0.1",
         port: 8080
     },
     sequelize: {
         host: "127.0.0.1",
-        database: "database",
-        username: "username",
-        password: "password",
+        database: "player_be",
+        username: "root",
+        password: "",
         dialect: "mysql",
         pool: {
             max: 5,

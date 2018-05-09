@@ -1,0 +1,14 @@
+language: node_js
+node_js: "lts"
+
+services:
+  - mysql
+
+before_script:
+  - mysql -e 'CREATE DATABASE player-be;'
+
+script: npm run travis-ci
+
+branches:
+  only:
+  - ci-test
