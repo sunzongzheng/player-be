@@ -5,7 +5,7 @@ services:
   - mysql
 
 before_script:
-  - mysql -e 'CREATE DATABASE player-be;'
+  - mysql -e 'CREATE DATABASE player;'
 
 script: npm run travis-ci
 

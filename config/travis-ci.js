@@ -6,7 +6,7 @@ module.exports = {
     },
     sequelize: {
         host: "127.0.0.1",
-        database: "player_be",
+        database: "player",
         username: "root",
         password: "",
         dialect: "mysql",
