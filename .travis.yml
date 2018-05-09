@@ -2,7 +2,16 @@ language: node_js
 
 node_js: "lts/*"
 
+
+addons:
+  apt:
+    sources:
+      - mysql-5.7-trusty
+    packages:
+      - mysql-server
+
 dist: trusty
+
 sudo: required
 
 services:
