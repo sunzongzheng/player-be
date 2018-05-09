@@ -1,0 +1,11 @@
+{
+    "verbose": true,
+    "watch": ["src/", "config/"],
+    "ext": "ts js",
+    "execMap": {
+        "ts": "node --inspect -r ts-node/register -r tsconfig-paths/register"
+    },
+    "env": {
+        "NODE_ENV": "development"
+    }
+}
