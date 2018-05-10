@@ -18,7 +18,7 @@ services:
   - mysql
 
 before_script:
-  - mysql -e 'CREATE DATABASE player;'
+  - mysql -e 'CREATE DATABASE player default charset utf8 COLLATE utf8_general_ci;'
 
 script: npm run travis-ci
 
