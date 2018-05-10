@@ -24,4 +24,5 @@ script: npm run travis-ci
 
 branches:
   only:
+  - master
   - ci-test
