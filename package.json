@@ -10,7 +10,8 @@
         "build": "babel src --out-dir dist",
         "generate-token": "ts-node -r tsconfig-paths/register test/utils/getToken.ts",
         "test": "mocha --inspect -r ts-node/register -r tsconfig-paths/register src/index.ts 'test/**/*.test.ts' --exit",
-        "travis-ci": "NODE_ENV=travis-ci npm run test"
+        "travis-ci": "NODE_ENV=travis-ci npm run test",
+        "lint": "prettier --write 'src/**/*.ts' 'test/**/*.ts'"
     },
     "author": "i@zzsun.cc",
     "license": "ISC",
@@ -45,12 +46,11 @@
         "passport-qq": "^0.1.0",
         "sequelize": "^4.37.1",
         "ts-node": "^5.0.1",
-        "tslint": "^5.9.1",
-        "tslint-config-standard": "^7.0.0",
         "typescript": "^2.8.1"
     },
     "devDependencies": {
         "nodemon": "^1.17.3",
+        "prettier": "1.12.1",
         "tsconfig-paths": "^3.2.0"
     }
 }
