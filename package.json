@@ -9,7 +9,8 @@
         "dev-copy": "nodemon --inspect src/app.js --exec babel-node",
         "build": "babel src --out-dir dist",
         "generate-token": "ts-node -r tsconfig-paths/register test/utils/getToken.ts",
-        "test": "NODE_ENV=unitTest mocha --inspect -r ts-node/register -r tsconfig-paths/register src/index.ts 'test/**/*.test.ts' --exit"
+        "test": "mocha --inspect -r ts-node/register -r tsconfig-paths/register src/index.ts 'test/**/*.test.ts' --exit",
+        "travis-ci": "NODE_ENV=travis-ci npm run test"
     },
     "author": "i@zzsun.cc",
     "license": "ISC",

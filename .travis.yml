@@ -1,0 +1,28 @@
+language: node_js
+
+node_js: "lts/*"
+
+
+addons:
+  apt:
+    sources:
+      - mysql-5.7-trusty
+    packages:
+      - mysql-server
+
+dist: trusty
+
+sudo: required
+
+services:
+  - mysql
+
+before_script:
+  - mysql -e 'CREATE DATABASE player default charset utf8 COLLATE utf8_general_ci;'
+
+script: npm run travis-ci
+
+branches:
+  only:
+  - master
+  - ci-test
