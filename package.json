@@ -1,17 +1,15 @@
 {
     "name": "api",
     "version": "1.0.0",
-    "description": "player background project",
+    "description": "player backend project",
     "main": "src/index.ts",
     "scripts": {
         "dev": "nodemon src/index.ts",
-        "tsc": "ts-node",
-        "dev-copy": "nodemon --inspect src/app.js --exec babel-node",
-        "build": "babel src --out-dir dist",
         "generate-token": "ts-node -r tsconfig-paths/register test/utils/getToken.ts",
         "test": "mocha --inspect -r ts-node/register -r tsconfig-paths/register src/index.ts 'test/**/*.test.ts' --exit",
         "travis-ci": "NODE_ENV=travis-ci npm run test",
-        "lint": "prettier --write 'src/**/*.ts' 'test/**/*.ts'"
+        "lint": "prettier --write 'src/**/*.ts' 'test/**/*.ts'",
+        "dev-webhook": "nodemon src/webhook.ts"
     },
     "author": "i@zzsun.cc",
     "license": "ISC",
@@ -35,9 +33,9 @@
         "express-async-errors": "^2.1.2",
         "express-session": "^1.15.6",
         "express-validator": "^5.1.2",
+        "github-webhook-handler": "^0.7.1",
         "jwt-simple": "^0.5.1",
         "lodash": "^4.17.5",
-        "mocha": "^5.0.5",
         "moment": "^2.19.3",
         "moment-timezone": "^0.5.14",
         "mysql2": "^1.4.2",
@@ -46,12 +44,13 @@
         "passport-qq": "^0.1.0",
         "sequelize": "^4.37.1",
         "ts-node": "^5.0.1",
-        "tslint-config-prettier": "^1.12.0",
         "typescript": "^2.8.1"
     },
     "devDependencies": {
+        "mocha": "^5.0.5",
         "nodemon": "^1.17.3",
         "prettier": "1.12.1",
-        "tsconfig-paths": "^3.2.0"
+        "tsconfig-paths": "^3.2.0",
+        "tslint-config-prettier": "^1.12.0"
     }
 }

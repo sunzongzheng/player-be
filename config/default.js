@@ -42,7 +42,14 @@ module.exports = {
         },
         to: "to@email"
     },
-    emailSendENV: ["production", "test"],
+    emailSendENV: [
+        "production", "test"
+    ],
     avoidNotifyIDList: [],
-    jwtKey: "jwtKey"
+    jwtKey: "jwtKey",
+    webhook: {
+        path: '/webhook',
+        port: 8338,
+        secret: 'webhook'
+    }
 }

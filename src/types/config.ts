@@ -26,4 +26,9 @@ declare namespace Config {
     }
     to: string
   }
+  interface webhook {
+    path: string
+    port: number
+    secret: string
+  }
 }
