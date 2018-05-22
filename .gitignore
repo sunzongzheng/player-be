@@ -7,3 +7,4 @@ yarn.lock
 .DS_Store
 .vscode
 yarn-error.log
+pm2.json

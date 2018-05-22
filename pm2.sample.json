@@ -1,0 +1,14 @@
+{
+  "apps": [
+    {
+      "name": "player-be",
+      "script": "./src/index.ts",
+      "watch": true,
+      "env": {
+        "NODE_ENV": "production"
+      },
+      "interpreter": "./node_modules/.bin/ts-node",
+      "interpreter_args": "-r tsconfig-paths/register"
+    }
+  ]
+}
