@@ -81,33 +81,54 @@ export default express()
       validate(req).throw()
       return models.sequelize
         .transaction((t: any) => {
+          const where = {
+            songId: req.body.id.toString(),
+            vendor: req.body.vendor,
+          }
+          const defaults = {
+            commentId: req.body.commentId.toString(),
+            name: req.body.name,
+            album: req.body.album,
+            artists: req.body.artists,
+            cp: req.body.cp,
+          }
           // 更新或插入 song表
           return models.song
-            .bulkCreate(
-              [
-                {
-                  songId: req.body.id,
-                  vendor: req.body.vendor,
-                  commentId: req.body.commentId,
-                  name: req.body.name,
-                  album: req.body.album,
-                  artists: req.body.artists,
-                  cp: req.body.cp,
-                },
-              ],
-              {
-                transaction: t,
-              }
-            )
-            .then((data: any) => {
+            .findOrCreate({
+              where,
+              defaults,
+              transaction: t,
+            })
+            .then((data: Array<any>) => {
+              const record: Schema.song = data[0]
+              const created: Boolean = data[1]
               // 创建收藏记录
-              return models.playlist_song.create(
-                {
-                  song_id: data[0].id,
-                  playlist_id: res.locals.id,
-                },
-                { transaction: t }
-              )
+              const createCollection = () => {
+                return models.playlist_song.create(
+                  {
+                    song_id: record.id,
+                    playlist_id: res.locals.id,
+                  },
+                  { transaction: t }
+                )
+              }
+              if (created) {
+                return createCollection()
+              } else {
+                return models.song
+                  .update(
+                    {
+                      ...defaults,
+                    },
+                    {
+                      where,
+                      transaction: t,
+                    }
+                  )
+                  .then(() => {
+                    return createCollection()
+                  })
+              }
             })
         })
         .then(() => {

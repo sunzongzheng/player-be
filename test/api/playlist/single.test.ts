@@ -15,9 +15,11 @@ import _ from 'lodash'
 describe('/playlist/:id', () => {
   let user: { accesstoken: string; info: Schema.user }
   let playlist: Schema.playlist
+  let playlist2: Schema.playlist
   let song: Schema.song
   let playlist_song: Schema.playlist_song
   let URL: string
+  let URL2: string
   const defaultSong = {
     id: '123',
     vendor: 'netease',
@@ -47,11 +49,14 @@ describe('/playlist/:id', () => {
     agent.get('/user').set('accesstoken', user.accesstoken)
     // 新建歌单
     playlist = await createTestPlaylist(user.info.id)
+    playlist2 = await createTestPlaylist(user.info.id)
     URL = `/playlist/${playlist.id}`
+    URL2 = `/playlist/${playlist2.id}`
   })
   after(async () => {
     // 删除创建的歌单
     await deleteTestPlaylist(playlist.id)
+    await deleteTestPlaylist(playlist2.id)
     // 删除歌曲
     await deleteTestSong(song.id)
     // 删除用户
@@ -225,7 +230,7 @@ describe('/playlist/:id', () => {
         expect(res.status).to.equal(400)
       })
   })
-  it('收藏歌曲 成功 200', () => {
+  it('收藏歌曲 到歌单1 成功 200', () => {
     const params = _.cloneDeep(defaultSong)
     return agent
       .post(URL)
@@ -251,6 +256,43 @@ describe('/playlist/:id', () => {
         })
         expect(check).to.not.equal(null)
         playlist_song = check.dataValues
+      })
+  })
+  it('收藏歌曲 到歌单2 成功 200', () => {
+    const params = _.cloneDeep(defaultSong)
+    return agent
+      .post(URL2)
+      .set('accesstoken', user.accesstoken)
+      .send(params)
+      .then(async res => {
+        expect(res.status).to.equal(200)
+        // song表有这首歌
+        let check = await models.song.findOne({
+          where: {
+            songId: params.id,
+            vendor: params.vendor,
+          },
+        })
+        expect(check).to.not.equal(null)
+        const song = check.dataValues
+        // playlist_song表有关联记录
+        check = await models.playlist_song.findOne({
+          where: {
+            song_id: song.id,
+            playlist_id: playlist2.id,
+          },
+        })
+        expect(check).to.not.equal(null)
+      })
+  })
+  it('再次收藏歌曲 到歌单2 失败 400', () => {
+    const params = _.cloneDeep(defaultSong)
+    return agent
+      .post(URL2)
+      .set('accesstoken', user.accesstoken)
+      .send(params)
+      .then(async res => {
+        expect(res.status).to.equal(400)
       })
   })
   it('获取歌单歌曲 成功 200', () => {
