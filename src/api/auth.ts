@@ -8,26 +8,21 @@ import qq from './auth/qq'
 const router = express()
 const qqStrategyOption: StrategyOption = config.get('qqStrategyOption')
 const serializeUser = (user: any, done: Function) => {
-  done(null, user)
+    done(null, user)
 }
 
 passport.serializeUser(serializeUser)
 passport.deserializeUser(serializeUser)
 passport.use(
-  new qqStrategy(
-    qqStrategyOption,
-    async (accessToken, refreshToken, profile, done) => {
-      // 获取unionID
-      const data = await axios.get(
-        `https://graph.qq.com/oauth2.0/me?access_token=${accessToken}&unionid=1`
-      )
-      const info = eval(`function callback(val){return val} ${data.data}`)
-      done(null, {
-        ...profile,
-        unionid: info.unionid,
-      })
-    }
-  )
+    new qqStrategy(qqStrategyOption, async (accessToken, refreshToken, profile, done) => {
+        // 获取unionID
+        const data = await axios.get(`https://graph.qq.com/oauth2.0/me?access_token=${accessToken}&unionid=1`)
+        const info = eval(`function callback(val){return val} ${data.data}`)
+        done(null, {
+            ...profile,
+            unionid: info.unionid,
+        })
+    })
 )
 router.use(passport.initialize())
 router.use(passport.session())

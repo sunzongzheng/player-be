@@ -13,14 +13,11 @@ app.use(bodyParser.json())
 app.use(middleware)
 
 export function createServer() {
-  app.listen(serverConfig.port, () => {
-    if (
-      process.env.NODE_ENV === 'production' ||
-      process.env.NODE_ENV === 'test'
-    ) {
-      console.log(`server running @${serverConfig.port}`)
-    }
-  })
+    app.listen(serverConfig.port, () => {
+        if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') {
+            console.log(`server running @${serverConfig.port}`)
+        }
+    })
 }
 
 export default app
