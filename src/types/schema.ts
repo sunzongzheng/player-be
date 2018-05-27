@@ -1,4 +1,9 @@
 declare namespace Schema {
+    enum vendor {
+        netease,
+        qq,
+        xiami,
+    }
     interface playlist {
         id: number
         name: string
@@ -21,7 +26,7 @@ declare namespace Schema {
     interface song {
         id: number
         songId: string
-        vendor: 'netease' | 'qq' | 'xiami'
+        vendor: vendor
         commentId: string
         name: string
         album: {

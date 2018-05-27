@@ -1,12 +1,16 @@
 import app from './app'
 import models from '@models'
 import { createServer } from './app'
+import createCron from './cron'
 
 models.sequelize
     .sync({
         alter: true,
     })
-    .then(() => createServer())
+    .then(() => {
+        createCron()
+        createServer()
+    })
     .catch((e: Error) => {
         throw e
     })
