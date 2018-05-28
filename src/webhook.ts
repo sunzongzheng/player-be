@@ -28,7 +28,7 @@ handler.on('error', err => {
 
 handler.on('push', event => {
     if (event.payload.ref === 'refs/heads/master') {
-        exec([`cd ${__dirname}/../`, 'git pull', 'npm i'].join(' && '), err => {
+        exec([`cd ${__dirname}/../`, 'git fetch --all', 'git reset --hard origin/dev', 'npm i'].join(' && '), err => {
             if (err instanceof Error) {
                 throw err
             }
