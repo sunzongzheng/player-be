@@ -13,10 +13,12 @@ export default (sequelize: Sequelize.Sequelize) => {
             name: {
                 type: Sequelize.STRING,
                 comment: '歌单名称',
+                unique: 'playlist_name',
             },
             user_id: {
                 type: Sequelize.INTEGER,
                 comment: '歌单所属用户ID',
+                unique: 'playlist_name',
             },
         },
         {

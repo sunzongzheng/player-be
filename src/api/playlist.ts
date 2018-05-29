@@ -24,14 +24,22 @@ export default express()
         }),
         async (req: express.Request, res: express.Response) => {
             validate(req).throw()
-            const data = await models.playlist.create({
-                user_id: res.locals.session.meta.id,
-                name: req.body.name,
-            })
-            res.send({
-                name: data.name,
-                id: data.id,
-            })
+            try {
+                const data = await models.playlist.create({
+                    user_id: res.locals.session.meta.id,
+                    name: req.body.name,
+                })
+                res.send({
+                    name: data.name,
+                    id: data.id,
+                })
+            } catch (e) {
+                if (e.errors && e.errors[0] && e.errors[0].type === 'unique violation') {
+                    throw new BadRequest('歌单已存在！')
+                } else {
+                    throw new Error(e)
+                }
+            }
         }
     )
     .delete(
