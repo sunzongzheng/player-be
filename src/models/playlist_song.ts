@@ -12,16 +12,20 @@ export default (sequelize: Sequelize.Sequelize) => {
             },
             song_id: {
                 type: Sequelize.INTEGER,
-                unique: 'playlist_song',
                 comment: 'song表ID',
             },
             playlist_id: {
                 type: Sequelize.INTEGER,
-                unique: 'playlist_song',
                 comment: '歌单ID',
             },
         },
         {
+            indexes: [
+                {
+                    fields: ['song_id', 'playlist_id'],
+                    unique: true,
+                },
+            ],
             freezeTableName: true,
         }
     )

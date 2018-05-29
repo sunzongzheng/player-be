@@ -12,12 +12,10 @@ export default (sequelize: Sequelize.Sequelize) => {
             },
             songId: {
                 type: Sequelize.STRING,
-                unique: 'song',
                 comment: '歌曲ID',
             },
             vendor: {
                 type: Sequelize.ENUM('netease', 'qq', 'xiami'),
-                unique: 'song',
                 comment: '歌曲提供商',
             },
             commentId: {
@@ -42,6 +40,12 @@ export default (sequelize: Sequelize.Sequelize) => {
             },
         },
         {
+            indexes: [
+                {
+                    fields: ['songId', 'vendor'],
+                    unique: true,
+                },
+            ],
             freezeTableName: true,
         }
     )
