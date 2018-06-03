@@ -22,7 +22,7 @@ export default express()
         schema({
             name,
         }),
-        async (req: express.Request, res: express.Response) => {
+        async (req, res) => {
             validate(req).throw()
             try {
                 const data = await models.playlist.create({
@@ -53,7 +53,7 @@ export default express()
                 },
             },
         }),
-        async (req: express.Request, res: express.Response) => {
+        async (req, res) => {
             validate(req).throw()
             const data = await models.playlist.destroy({
                 where: {
@@ -78,7 +78,7 @@ export default express()
                 isInt: true,
             },
         }),
-        (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        (req, res, next) => {
             validate(req).throw()
             res.locals.id = req.params.id
             next()
