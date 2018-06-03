@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "player-be",
+      "name": "player-be-production",
       "script": "./src/index.ts",
       "watch": true,
       "env": {
@@ -11,7 +11,7 @@
       "interpreter_args": "-r tsconfig-paths/register"
     },
     {
-      "name": "player-be-webhook",
+      "name": "player-be-webhook-production",
       "script": "./src/webhook.ts",
       "watch": true,
       "interpreter": "./node_modules/.bin/ts-node"
