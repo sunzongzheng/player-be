@@ -28,11 +28,14 @@ handler.on('error', err => {
 
 handler.on('push', event => {
     if (event.payload.ref === 'refs/heads/master') {
-        exec([`cd ${__dirname}/../`, 'git fetch --all', 'git reset --hard origin/master', 'npm i'].join(' && '), err => {
-            if (err instanceof Error) {
-                throw err
+        exec(
+            [`cd ${__dirname}/../`, 'git fetch --all', 'git reset --hard origin/master', 'npm i'].join(' && '),
+            err => {
+                if (err instanceof Error) {
+                    throw err
+                }
             }
-        })
+        )
     }
     console.log('%s: Received a push event for %s to %s', getMoment(), event.payload.repository.name, event.payload.ref)
 })

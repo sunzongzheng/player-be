@@ -8,3 +8,4 @@ yarn.lock
 .vscode
 yarn-error.log
 pm2.json
+src/control.ts
