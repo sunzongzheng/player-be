@@ -1,7 +1,7 @@
 export enum vendor {
-    netease,
-    qq,
-    xiami,
+    netease = 'netease',
+    qq = 'qq',
+    xiami = 'xiami',
 }
 
 export interface EmailOption {

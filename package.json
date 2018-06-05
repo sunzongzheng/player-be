@@ -9,7 +9,9 @@
         "test": "mocha --inspect -r ts-node/register -r tsconfig-paths/register src/index.ts 'test/**/*.test.ts' --exit",
         "travis-ci": "NODE_ENV=travis-ci npm run test",
         "lint": "prettier --write 'src/**/*.ts' 'test/**/*.ts'",
-        "dev-webhook": "nodemon src/webhook.ts"
+        "dev-webhook": "nodemon src/webhook.ts",
+        "dev-control": "nodemon src/control.ts",
+        "run-control": "ts-node -r tsconfig-paths/register src/control.ts"
     },
     "author": "i@zzsun.cc",
     "license": "ISC",
