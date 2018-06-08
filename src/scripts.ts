@@ -1,5 +1,5 @@
 import models from '@models'
-import musicApi from 'music-api'
+import musicApi from '@suen/music-api'
 import Sequelize from 'sequelize'
 import moment from 'moment'
 import config from 'config'
@@ -8,45 +8,64 @@ import { vendor } from '@types'
 
 export async function updateSongInfo(): Promise<void> {
     const songs = await models.song.findAll()
-    for (let item of songs) {
-        if (item.vendor === 'netease') continue
-        const data = await musicApi.getSongDetail(item.vendor, item.songId)
+    // 先打表
+    const songsList: { [key in Schema.vendor]: Array<Schema.song> } = {
+        [vendor.netease]: [],
+        [vendor.xiami]: [],
+        [vendor.qq]: [],
+    }
+    const songsObject: {
+        [key in Schema.vendor]: {
+            [key: string]: Schema.song
+        }
+    } = {
+        [vendor.netease]: {},
+        [vendor.xiami]: {},
+        [vendor.qq]: {},
+    }
+    songs.forEach((item: Schema.song) => {
+        songsList[item.vendor].push(item)
+        songsObject[item.vendor][item.songId] = item
+    })
+    for (let key of Object.keys(songsList)) {
+        const _key = key as vendor
+        if (_key === vendor.netease) continue
+        // 一次拿到所有歌曲信息
+        const data = await musicApi.getBatchSongDetail(_key, songsList[_key].map(item => item.songId))
         if (data.status) {
-            const info = data.data
-            const updateInfo = {
-                commentId: info.commentId + '',
-                name: info.name,
-                artists: info.artists,
-                cp: info.cp,
-            }
-            const defaultInfo = {
-                commentId: item.commentId,
-                name: item.name,
-                artists: item.artists,
-                cp: item.cp,
-            }
-            if (!_.isEqual(updateInfo, defaultInfo)) {
-                models.song
-                    .update(updateInfo, {
-                        where: {
-                            id: item.id,
-                        },
-                    })
-                    .then(() => {
+            for (let info of data.data) {
+                // 待更新的信息
+                const updateInfo = {
+                    commentId: info.commentId + '',
+                    name: info.name,
+                    artists: info.artists,
+                    cp: info.cp,
+                }
+                // 数据库中已存的信息
+                const item = songsObject[_key][info.id.toString()]
+                const defaultInfo = {
+                    commentId: item.commentId,
+                    name: item.name,
+                    artists: item.artists,
+                    cp: item.cp,
+                }
+                // 比对是否相等
+                if (!_.isEqual(updateInfo, defaultInfo)) {
+                    try {
+                        await models.song.update(updateInfo, {
+                            where: {
+                                id: item.id,
+                            },
+                        })
                         console.log('update success: %s', item.name)
-                    })
-                    .catch((e: Error) => {
+                    } catch (e) {
                         console.error('update fail: %s', item.name)
-                    })
+                    }
+                }
             }
         } else {
-            console.error('getDetail fail: %s %s %s', item.name, item.vendor, item.songId)
+            console.error('getDetail fail: %s', key)
         }
-        await new Promise(resolve => {
-            setTimeout(() => {
-                resolve()
-            }, 1000)
-        })
     }
     console.log('updateSongInfo down')
 }

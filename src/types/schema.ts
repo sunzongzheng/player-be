@@ -1,8 +1,8 @@
 declare namespace Schema {
     enum vendor {
-        netease,
-        qq,
-        xiami,
+        netease = 'netease',
+        qq = 'qq',
+        xiami = 'xiami',
     }
     interface playlist {
         id: number

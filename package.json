@@ -16,6 +16,7 @@
     "author": "i@zzsun.cc",
     "license": "ISC",
     "dependencies": {
+        "@suen/music-api": "https://github.com/sunzongzheng/musicApi.git",
         "@types/chai": "^4.1.2",
         "@types/chai-http": "^3.0.4",
         "@types/config": "^0.0.34",
@@ -41,7 +42,6 @@
         "jwt-simple": "^0.5.1",
         "lodash": "^4.17.5",
         "moment": "^2.19.3",
-        "music-api": "https://github.com/sunzongzheng/musicApi.git",
         "mysql2": "^1.4.2",
         "nodemailer": "^4.4.2",
         "passport": "^0.4.0",
