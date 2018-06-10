@@ -29,7 +29,13 @@ handler.on('error', err => {
 handler.on('push', event => {
     if (event.payload.ref === 'refs/heads/master') {
         exec(
-            [`cd ${__dirname}/../`, 'git fetch --all', 'git reset --hard origin/master', 'npm i', 'npm update @suen/music-api'].join(' && '),
+            [
+                `cd ${__dirname}/../`,
+                'git fetch --all',
+                'git reset --hard origin/master',
+                'npm i',
+                'npm update @suen/music-api',
+            ].join(' && '),
             err => {
                 if (err instanceof Error) {
                     throw err

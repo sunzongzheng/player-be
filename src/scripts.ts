@@ -8,63 +8,96 @@ import { vendor } from '@types'
 
 export async function updateSongInfo(): Promise<void> {
     const songs = await models.song.findAll()
-    // 先打表
+    // 分类
     const songsList: { [key in Schema.vendor]: Array<Schema.song> } = {
         [vendor.netease]: [],
         [vendor.xiami]: [],
         [vendor.qq]: [],
     }
-    const songsObject: {
-        [key in Schema.vendor]: {
-            [key: string]: Schema.song
-        }
-    } = {
-        [vendor.netease]: {},
-        [vendor.xiami]: {},
-        [vendor.qq]: {},
-    }
     songs.forEach((item: Schema.song) => {
         songsList[item.vendor].push(item)
-        songsObject[item.vendor][item.songId] = item
     })
-    for (let key of Object.keys(songsList)) {
-        const _key = key as vendor
-        if (_key === vendor.netease) continue
-        // 一次拿到所有歌曲信息
-        const data = await musicApi.getBatchSongDetail(_key, songsList[_key].map(item => item.songId))
+    const doUpdate = async (vendor: vendor, list: Array<Schema.song>) => {
+        const ids = list.map(item => item.songId)
+        const data = await musicApi.getBatchSongDetail(vendor, ids)
         if (data.status) {
-            for (let info of data.data) {
-                // 待更新的信息
-                const updateInfo = {
+            const songsObject: {
+                [key: string]: musicApi.musicInfo
+            } = {}
+            data.data.forEach(item => {
+                songsObject[item.id.toString()] = item
+            })
+            // 遍历数据库中的数据
+            for (let info of list) {
+                // 已存的信息
+                const defaultInfo = {
                     commentId: info.commentId + '',
                     name: info.name,
                     artists: info.artists,
                     cp: info.cp,
                 }
-                // 数据库中已存的信息
-                const item = songsObject[_key][info.id.toString()]
-                const defaultInfo = {
-                    commentId: item.commentId,
-                    name: item.name,
-                    artists: item.artists,
-                    cp: item.cp,
-                }
-                // 比对是否相等
-                if (!_.isEqual(updateInfo, defaultInfo)) {
+                const item = songsObject[info.songId]
+                if (item) {
+                    // 待更新的信息
+                    const updateInfo = {
+                        commentId: item.commentId + '',
+                        name: item.name,
+                        artists: item.artists,
+                        cp: item.cp,
+                    }
+                    // 比对是否相等
+                    if (!_.isEqual(updateInfo, defaultInfo)) {
+                        try { 
+                            await models.song.update(updateInfo, {
+                                where: {
+                                    id: info.id,
+                                },
+                            })
+                            console.log('update success: %s', info.name)
+                        } catch (e) {
+                            console.error('update fail: %s', info.name)
+                        }
+                    }
+                } else {
+                    // 歌曲信息不存在 代表音乐平台把歌曲删了
+                    console.log(info.vendor, info.name, info.songId)
                     try {
-                        await models.song.update(updateInfo, {
-                            where: {
-                                id: item.id,
+                        await models.song.update(
+                            {
+                                cp: true,
                             },
-                        })
-                        console.log('update success: %s', item.name)
+                            {
+                                where: {
+                                    id: info.id,
+                                },
+                            }
+                        )
+                        console.log('update success: %s', info.name)
                     } catch (e) {
-                        console.error('update fail: %s', item.name)
+                        console.error('update fail: %s', info.name)
                     }
                 }
             }
         } else {
-            console.error('getDetail fail: %s', key)
+            console.error('getDetail fail: %s', vendor)
+        }
+    }
+    for (let key of Object.keys(songsList)) {
+        const _key = key as vendor
+        const list = songsList[_key]
+        if (_key === vendor.netease) continue // 网易云暂不更新
+        if (_key === vendor.qq) {
+            let arr: Array<Schema.song> = []
+            for (let index = 0; index < list.length; index++) {
+                arr.push(list[index])
+                if (arr.length === 50 || index + 1 === list.length) {
+                    // 每50首更新一次
+                    await doUpdate(_key, arr)
+                    arr = []
+                }
+            }
+        } else {
+            await doUpdate(_key, list)
         }
     }
     console.log('updateSongInfo down')
