@@ -47,7 +47,7 @@ export async function updateSongInfo(): Promise<void> {
                     }
                     // 比对是否相等
                     if (!_.isEqual(updateInfo, defaultInfo)) {
-                        try { 
+                        try {
                             await models.song.update(updateInfo, {
                                 where: {
                                     id: info.id,
@@ -85,7 +85,6 @@ export async function updateSongInfo(): Promise<void> {
     for (let key of Object.keys(songsList)) {
         const _key = key as vendor
         const list = songsList[_key]
-        if (_key === vendor.netease) continue // 网易云暂不更新
         if (_key === vendor.qq) {
             let arr: Array<Schema.song> = []
             for (let index = 0; index < list.length; index++) {

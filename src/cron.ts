@@ -1,16 +1,16 @@
-import { commentId, artists } from './validator/song'
 import { CronJob } from 'cron'
-import _ from 'lodash'
 import { updateSongInfo, move } from './scripts'
 
 export default function() {
     const job = new CronJob(
         '00 00 */6 * * *',
         async () => {
+            console.info('定时任务开始')
             // 更新歌曲信息
-            updateSongInfo()
+            await updateSongInfo()
             // 旧数据迁移
-            move()
+            await move()
+            console.info('定时任务结束')
         },
         () => {},
         true,
