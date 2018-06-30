@@ -5,7 +5,6 @@ import { Forbidden, BadRequest, SystemError } from '@libs/error'
 import { name } from '@validator/playlist'
 import { id } from '@validator/playlist_song'
 import ValidatorSong from '@validator/song'
-import sequelize, { Sequelize, Model, Models, Utils } from 'sequelize'
 
 export default express()
     // 检查权限
@@ -65,7 +64,7 @@ export default express()
             }
         }
     )
-    .post('/', schema(ValidatorSong), async (req: express.Request, res: express.Response) => {
+    .post('/', schema(ValidatorSong), async (req, res) => {
         validate(req).throw()
         return models.sequelize
             .transaction((t: any) => {

@@ -1,5 +1,9 @@
 import { ValidationParamSchema, check } from 'express-validator/check'
 
+const isUndefined = (value: any) => {
+    return typeof value === 'undefined'
+}
+
 export const id: ValidationParamSchema = {
     in: ['body'],
     isEmpty: {
@@ -52,7 +56,7 @@ export const artists: ValidationParamSchema = {
     custom: {
         options: (value: any, { req }) => {
             for (let item of value) {
-                if (!item.id || !item.name) {
+                if (isUndefined(item.id) || isUndefined(item.name)) {
                     return false
                 }
             }
