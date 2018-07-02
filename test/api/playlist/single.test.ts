@@ -17,9 +17,11 @@ describe('/playlist/:id', () => {
     let playlist: Schema.playlist
     let playlist2: Schema.playlist
     let song: Schema.song
+    let songs: Array<Schema.song> = []
     let playlist_song: Schema.playlist_song
     let URL: string
     let URL2: string
+    let URL3: string
     const defaultSong = {
         id: '123',
         vendor: 'netease',
@@ -52,13 +54,15 @@ describe('/playlist/:id', () => {
         playlist2 = await createTestPlaylist(user.info.id)
         URL = `/playlist/${playlist.id}`
         URL2 = `/playlist/${playlist2.id}`
+        URL3 = `/playlist/${playlist.id}/batch`
     })
     after(async () => {
         // 删除创建的歌单
         await deleteTestPlaylist(playlist.id)
         await deleteTestPlaylist(playlist2.id)
         // 删除歌曲
-        await deleteTestSong(song.id)
+        await deleteTestSong([song.id])
+        await deleteTestSong(songs.map(item => item.id))
         // 删除用户
         await deleteTestUser(user.info.id)
     })
@@ -295,6 +299,74 @@ describe('/playlist/:id', () => {
                 expect(res.status).to.equal(400)
             })
     })
+    it('批量收藏歌曲 ids不传 400', () => {
+        return agent
+            .post(URL3)
+            .set('accesstoken', user.accesstoken)
+            .then(async res => {
+                expect(res.status).to.equal(400)
+            })
+    })
+    it('批量收藏歌曲 ids非数组 400', () => {
+        return agent
+            .post(URL3)
+            .set('accesstoken', user.accesstoken)
+            .send({
+                ids: '123',
+            })
+            .then(async res => {
+                expect(res.status).to.equal(400)
+            })
+    })
+    it('批量收藏歌曲 vendor不传 400', () => {
+        return agent
+            .post(URL3)
+            .set('accesstoken', user.accesstoken)
+            .then(async res => {
+                expect(res.status).to.equal(400)
+            })
+    })
+    it('批量收藏歌曲 vendor错误 400', () => {
+        return agent
+            .post(URL3)
+            .set('accesstoken', user.accesstoken)
+            .then(async res => {
+                expect(res.status).to.equal(400)
+            })
+    })
+    it('批量收藏歌曲 部分失败 200', () => {
+        const correctIds = [27808044, 108914]
+        return agent
+            .post(URL3)
+            .set('accesstoken', user.accesstoken)
+            .send({
+                vendor: 'netease',
+                ids: ['-1', '-2', ...correctIds],
+            })
+            .then(async res => {
+                expect(res.status).to.equal(200)
+                expect(res.body.failedList.length).to.equal(2)
+                for (let songId of correctIds) {
+                    // song表有这首歌
+                    let check = await models.song.findOne({
+                        where: {
+                            songId: songId.toString(),
+                            vendor: 'netease',
+                        },
+                    })
+                    expect(check).to.not.equal(null)
+                    songs.push(check.dataValues)
+                    // playlist_song表有关联记录
+                    check = await models.playlist_song.findOne({
+                        where: {
+                            song_id: check.dataValues.id,
+                            playlist_id: playlist.id,
+                        },
+                    })
+                    expect(check).to.not.equal(null)
+                }
+            })
+    })
     it('获取歌单歌曲 成功 200', () => {
         return agent
             .get(URL)
@@ -302,7 +374,7 @@ describe('/playlist/:id', () => {
             .then(res => {
                 expect(res.status).to.equal(200)
                 expect(res.body).to.be.a('array')
-                expect(res.body[0].id).equals(song.id)
+                expect(res.body.length).equals(songs.length + 1)
             })
     })
     it('取消收藏 不传ID 400', () => {

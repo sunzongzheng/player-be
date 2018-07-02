@@ -12,3 +12,14 @@ export const name: ValidationParamSchema = {
     },
     trim: true,
 }
+
+export const ids: ValidationParamSchema = {
+    in: ['body'],
+    isEmpty: {
+        errorMessage: '歌曲ids不能为空',
+        negated: true,
+    },
+    isArray: {
+        errorMessage: 'ids必须为数组',
+    },
+}

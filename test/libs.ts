@@ -2,6 +2,7 @@ import chai from 'chai'
 import chaiHttp from 'chai-http'
 import models from '@models'
 import encrypt from '@libs/encrypt'
+import { Op } from 'sequelize'
 
 chai.use(chaiHttp)
 
@@ -54,10 +55,12 @@ export async function deleteTestPlaylistSong(id: number): Promise<Number> {
         },
     })
 }
-export async function deleteTestSong(id: number): Promise<Number> {
+export async function deleteTestSong(ids: Array<number>): Promise<Number> {
     return await models.song.destroy({
         where: {
-            id,
+            id: {
+                [Op.in]: ids,
+            },
         },
     })
 }
