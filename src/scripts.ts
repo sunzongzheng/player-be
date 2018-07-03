@@ -102,6 +102,38 @@ export async function updateSongInfo(): Promise<void> {
     console.log('updateSongInfo down')
 }
 
+export async function updateQQCommentId(): Promise<void> {
+    const songs = await models.song.findAll({
+        where: {
+            vendor: 'qq',
+        },
+    })
+    // 挨个更新
+    for (let item of songs) {
+        const info = await musicApi.qq.getSongDetail(item.songId, false, 'songmid')
+        await new Promise(resolve => {
+            setTimeout(() => {
+                resolve()
+            }, 500)
+        })
+        if (!info.status) {
+            console.log('cannot get info: ', item.name, item.songId)
+            continue
+        }
+        await models.song.update(
+            {
+                commentId: info.data.id,
+            },
+            {
+                where: {
+                    id: item.id,
+                },
+            }
+        )
+        console.log('update success: ', item.name)
+    }
+}
+
 export async function move(): Promise<void> {
     const last = new Sequelize(config.get('oldSequelize'))
     const next = new Sequelize(config.get('sequelize'))
