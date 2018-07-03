@@ -18,7 +18,9 @@ export async function updateSongInfo(): Promise<void> {
         songsList[item.vendor].push(item)
     })
     const doUpdate = async (vendor: vendor, list: Array<Schema.song>) => {
-        const ids = list.map(item => item.songId)
+        const ids = list.map(
+            item => (vendor === 'qq' && item.commentId && item.commentId !== 'undefined' ? item.commentId : item.songId)
+        )
         const data = await musicApi.getBatchSongDetail(vendor, ids)
         if (data.status) {
             const songsObject: {
@@ -36,11 +38,12 @@ export async function updateSongInfo(): Promise<void> {
                     artists: info.artists,
                     cp: info.cp,
                 }
-                const item = songsObject[info.songId]
+                const songId = info.commentId && info.commentId !== 'undefined' ? info.commentId : info.songId
+                const item = songsObject[songId]
                 if (item) {
                     // 待更新的信息
                     const updateInfo = {
-                        commentId: item.commentId + '',
+                        commentId: item.id + '',
                         name: item.name,
                         artists: item.artists,
                         cp: item.cp,
@@ -61,20 +64,22 @@ export async function updateSongInfo(): Promise<void> {
                 } else {
                     // 歌曲信息不存在 代表音乐平台把歌曲删了
                     console.log(info.vendor, info.name, info.songId)
-                    try {
-                        await models.song.update(
-                            {
-                                cp: true,
-                            },
-                            {
-                                where: {
-                                    id: info.id,
+                    if (!info.cp) {
+                        try {
+                            await models.song.update(
+                                {
+                                    cp: true,
                                 },
-                            }
-                        )
-                        console.log('update success: %s', info.name)
-                    } catch (e) {
-                        console.error('update fail: %s', info.name)
+                                {
+                                    where: {
+                                        id: info.id,
+                                    },
+                                }
+                            )
+                            console.log('update success: %s', info.name)
+                        } catch (e) {
+                            console.error('update fail: %s', info.name)
+                        }
                     }
                 }
             }
