@@ -140,85 +140,113 @@ export default express()
             validate(req).throw()
             const ids = req.body.ids
             const vendor = req.body.vendor
-            // 拿到歌曲信息
-            const musicInfoResponse = await musicApi.getBatchSongDetail(vendor, ids)
-            if (!musicInfoResponse.status) {
-                throw new SystemError('获取歌曲信息失败，请重试')
-            }
-            const songsObject: {
-                [key: string]: musicInfo
-            } = {}
-            musicInfoResponse.data.forEach((item: musicInfo) => {
-                songsObject[item.id] = item
-            })
             const failedList: Array<{ id: number | string; msg: string; log?: any }> = []
-            // 循环存储
-            for (let songId of ids) {
-                const curSongInfo = songsObject[songId]
-                if (!curSongInfo) {
-                    // 未拿到歌曲信息 代表id有误 跳过
-                    failedList.push({ id: songId, msg: 'id有误' })
-                    continue
+            const doInsert = async (list: Array<number>) => {
+                // 拿到歌曲信息
+                const musicInfoResponse = await musicApi.getBatchSongDetail(vendor, list)
+                if (!musicInfoResponse.status) {
+                    throw new SystemError('获取歌曲信息失败，请重试')
                 }
-                try {
-                    await models.sequelize.transaction((t: any) => {
-                        const where = {
-                            songId: songId.toString(),
-                            vendor,
+                const songsObject: {
+                    [key: string]: musicInfo
+                } = {}
+                musicInfoResponse.data.forEach((item: musicInfo) => {
+                    songsObject[item.id] = item
+                })
+                // 循环存储
+                for (let songId of list) {
+                    let curSongInfo = songsObject[songId]
+                    if (!curSongInfo) {
+                        // 未拿到歌曲信息
+                        // 如果是QQ音乐 调用单个获取信息的接口 有返回代表QQ音乐把歌曲id都换了！没有则代表id有误 跳过
+                        if (vendor === 'qq') {
+                            const singleInfo = await musicApi.getSongDetail(vendor, songId)
+                            if (singleInfo.status) {
+                                curSongInfo = singleInfo.data
+                            } else {
+                                failedList.push({ id: songId, msg: 'id有误' })
+                                continue
+                            }
+                        } else {
+                            // 其他平台暂未发现会换id 直接代表id有误 跳过
+                            failedList.push({ id: songId, msg: 'id有误' })
+                            continue
                         }
-                        const defaults = {
-                            commentId: curSongInfo.commentId.toString(),
-                            name: curSongInfo.name,
-                            album: curSongInfo.album,
-                            artists: curSongInfo.artists,
-                            cp: curSongInfo.cp,
-                        }
-                        // 更新或插入 song表
-                        return models.song
-                            .findOrCreate({
-                                where,
-                                defaults,
-                                transaction: t,
-                            })
-                            .then((data: Array<any>) => {
-                                const record: Schema.song = data[0]
-                                const created: Boolean = data[1]
-                                // 创建收藏记录
-                                const createCollection = () => {
-                                    return models.playlist_song.create(
-                                        {
-                                            song_id: record.id,
-                                            playlist_id: res.locals.id,
-                                        },
-                                        { transaction: t }
-                                    )
-                                }
-                                if (created) {
-                                    return createCollection()
-                                } else {
-                                    return models.song
-                                        .update(
+                    }
+                    try {
+                        await models.sequelize.transaction((t: any) => {
+                            const where = {
+                                songId: songId.toString(),
+                                vendor,
+                            }
+                            const defaults = {
+                                commentId: curSongInfo.id.toString(),
+                                name: curSongInfo.name,
+                                album: curSongInfo.album,
+                                artists: curSongInfo.artists,
+                                cp: curSongInfo.cp,
+                            }
+                            // 更新或插入 song表
+                            return models.song
+                                .findOrCreate({
+                                    where,
+                                    defaults,
+                                    transaction: t,
+                                })
+                                .then((data: Array<any>) => {
+                                    const record: Schema.song = data[0]
+                                    const created: Boolean = data[1]
+                                    // 创建收藏记录
+                                    const createCollection = () => {
+                                        return models.playlist_song.create(
                                             {
-                                                ...defaults,
+                                                song_id: record.id,
+                                                playlist_id: res.locals.id,
                                             },
-                                            {
-                                                where,
-                                                transaction: t,
-                                            }
+                                            { transaction: t }
                                         )
-                                        .then(() => {
-                                            return createCollection()
-                                        })
-                                }
-                            })
-                    })
-                } catch (e) {
-                    if (e.errors && e.errors[0] && e.errors[0].type === 'unique violation') {
-                        failedList.push({ id: songId, msg: '歌曲已存在！' })
-                    } else {
-                        failedList.push({ id: songId, msg: '添加失败', log: e })
+                                    }
+                                    if (created) {
+                                        return createCollection()
+                                    } else {
+                                        return models.song
+                                            .update(
+                                                {
+                                                    ...defaults,
+                                                },
+                                                {
+                                                    where,
+                                                    transaction: t,
+                                                }
+                                            )
+                                            .then(() => {
+                                                return createCollection()
+                                            })
+                                    }
+                                })
+                        })
+                    } catch (e) {
+                        console.warn(e)
+                        if (e.errors && e.errors[0] && e.errors[0].type === 'unique violation') {
+                            failedList.push({ id: songId, msg: '歌曲已存在！' })
+                        } else {
+                            failedList.push({ id: songId, msg: '添加失败', log: e })
+                        }
                     }
                 }
+            }
+            if (vendor === 'qq') {
+                let arr: Array<number> = []
+                for (let index = 0; index < ids.length; index++) {
+                    arr.push(ids[index])
+                    if (arr.length === 50 || index + 1 === ids.length) {
+                        // 每50首插入一次
+                        await doInsert(arr)
+                        arr = []
+                    }
+                }
+            } else {
+                await doInsert(ids)
             }
             res.send({
                 failedList,
