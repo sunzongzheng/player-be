@@ -209,10 +209,7 @@ export async function move(): Promise<void> {
                     songValues
                 )
                     .join(',')
-                    .replace(/[\\]/g, '\\\\')}) ON DUPLICATE KEY 
-                    UPDATE ${Object.entries(songValues)
-                        .map(item => item.join(' = '))
-                        .join(',')}`
+                    .replace(/[\\]/g, '\\\\')})`
 
                 let song_id
                 try {
