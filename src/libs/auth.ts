@@ -1,12 +1,13 @@
 import { Op } from 'sequelize'
 import models from '@models'
 import config from 'config'
-import { SessionMeta } from '@types'
 import encrypt from '@libs/encrypt'
 import mailer from '@libs/mail'
 import moment from 'moment'
 import axios from 'axios'
-import { BadRequest, SystemError } from '@libs/error'
+import { BadRequest } from '@libs/error'
+import platform from 'platform'
+import express from '@libs/express'
 
 const notEmailArr: Array<number> = config.get('avoidNotifyIDList')
 const emailConfig: Config.email = config.get('email')
@@ -52,7 +53,7 @@ function update(id: number, updateData: UpdateDataOption) {
     })
 }
 
-export async function qqAuthWrite(options: OPTIONS): Promise<Schema.user> {
+export async function qqAuthWrite(req: express.Request, options: OPTIONS): Promise<Schema.user> {
     // 不存在插入
     let result = await findOrCreate(options)
     const info = result[0].dataValues
@@ -65,12 +66,24 @@ export async function qqAuthWrite(options: OPTIONS): Promise<Schema.user> {
             unionid: options.unionid,
         })
     }
+    let login_platform = '未知'
+    try {
+        const ua = (req.headers['user-agent'] || '').toString()
+        const platformInfo = platform.parse(ua)
+        if (ua.includes('okhttp')) {
+            login_platform = '安卓'
+        } else if (platformInfo.os.family) {
+            login_platform = platformInfo.os.family
+        }
+    } catch (e) {
+        console.log(e)
+    }
     // 邮件推送
     if (!notEmailArr.includes(info.id)) {
         mailer.send({
             to: emailConfig.to,
             subject: '有用户通过QQ授权方式登录了系统',
-            text: `${info.nickname}刚刚登录了系统`,
+            text: `${info.nickname}刚刚在${login_platform}平台上登录了系统`,
         })
     }
     return info

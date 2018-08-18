@@ -46,6 +46,7 @@
         "nodemailer": "^4.4.2",
         "passport": "^0.4.0",
         "passport-qq": "^0.1.0",
+        "platform": "^1.3.5",
         "sequelize": "^4.37.1",
         "ts-node": "^5.0.1",
         "typescript": "^2.8.1"

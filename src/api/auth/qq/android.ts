@@ -30,7 +30,7 @@ router.get(
         // 获取unionID
         const unionid = await getUnionID(req.query.access_token)
         // 存储
-        const info = await qqAuthWrite({
+        const info = await qqAuthWrite(req, {
             sn: req.query.openid,
             unionid,
             nickname: userInfo.nickname,

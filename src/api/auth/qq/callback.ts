@@ -14,7 +14,7 @@ router.get('/', passport.authenticate('qq'), async (req, res, next) => {
         throw new BadRequest(user._json.msg)
     }
     const data = _req.user._json
-    const info = await qqAuthWrite({
+    const info = await qqAuthWrite(req, {
         sn: _req.user.id,
         unionid: _req.user.unionid,
         nickname: data.nickname,
