@@ -6,7 +6,7 @@ import { SessionMeta, Session } from '../types'
 import moment from 'moment'
 
 const router = express()
-const noPermissionList = ['/auth/qq', '/auth/qq/callback', '/auth/qq/android']
+const noPermissionList = ['/auth/qq', '/auth/qq/callback', '/auth/qq/android', '/music/netease/rank']
 
 router.use((req, res, next) => {
     if (noPermissionList.includes(req.path)) {

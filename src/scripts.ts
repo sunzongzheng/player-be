@@ -5,6 +5,7 @@ import moment from 'moment'
 import config from 'config'
 import _ from 'lodash'
 import { vendor } from '@types'
+import redis from '@redis'
 
 export async function updateSongInfo(): Promise<void> {
     const songs = await models.song.findAll()
@@ -243,4 +244,15 @@ export async function move(): Promise<void> {
     console.log('transferPlaylist down')
     await transferPlaylist_song()
     console.log('transferPlaylist_song down')
+}
+
+export async function getNeteaseRank(): Promise<void> {
+    for (let i = 0; i <= 21; i++) {
+        const data = await musicApi.netease.getTopList(i.toString())
+        if (data.status) {
+            redis.set(`netease-rank-${i}`, JSON.stringify(data.data))
+        } else {
+            console.log(`获取网易云排行榜失败：${i}, ${JSON.stringify(data)}`)
+        }
+    }
 }

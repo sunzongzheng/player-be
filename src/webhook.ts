@@ -35,7 +35,7 @@ handler.on('push', event => {
                 'git reset --hard origin/master',
                 'npm i',
                 'npm update @suen/music-api',
-                'pm2 restart player-be-production'
+                'pm2 restart player-be-production',
             ].join(' && '),
             err => {
                 if (err instanceof Error) {

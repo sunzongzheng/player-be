@@ -1,5 +1,5 @@
 import { CronJob } from 'cron'
-import { updateSongInfo, move } from './scripts'
+import { updateSongInfo, move, getNeteaseRank } from './scripts'
 
 export default function() {
     const job = new CronJob(
@@ -10,6 +10,8 @@ export default function() {
             await updateSongInfo()
             // 旧数据迁移
             await move()
+            // 获取网易云排行榜
+            await getNeteaseRank()
             console.info('定时任务结束')
         },
         () => {},
