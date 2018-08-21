@@ -23,3 +23,19 @@ export const rankIds: ValidationParamSchema = {
         errorMessage: 'ids格式错误',
     },
 }
+
+// limit
+export const limit: ValidationParamSchema = {
+    in: ['query'],
+    custom: {
+        options: value => {
+            if (typeof value === 'undefined') return true
+            const limit = Number(value)
+            if (isNaN(limit) || limit < 0) {
+                return false
+            }
+            return true
+        },
+        errorMessage: 'limit错误',
+    },
+}
