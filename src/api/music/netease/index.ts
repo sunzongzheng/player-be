@@ -27,7 +27,7 @@ router.get('/rank', checkSchema({ ids: rankIds, limit: limit }), async (req, res
                 }
             }
             answer.list = answer.list.slice(0, limit)
-            answer.id = id
+            answer.id = Number(id)
             rs.push(answer)
         } catch (e) {
             console.warn(e)
