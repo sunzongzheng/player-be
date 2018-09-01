@@ -1,6 +1,5 @@
 import express from '@libs/express'
 import single from './playlist/single'
-import { Session } from '@types'
 import models from '@models'
 import { schema, validate } from '@libs/validator'
 import { BadRequest } from '@src/libs/error'
@@ -13,7 +12,7 @@ export default express()
                 user_id: res.locals.session.meta.id,
             },
             order: [['createdAt', 'DESC']],
-            attributes: ['id', 'name'],
+            attributes: ['id', 'name', 'createdAt'],
         })
         res.send(data)
     })
