@@ -11,10 +11,32 @@ export default express()
             where: {
                 user_id: res.locals.session.meta.id,
             },
-            order: [['createdAt', 'DESC']],
+            include: [
+                {
+                    model: models.playlist_song,
+                    attributes: ['playlist_id', 'song_id'],
+                    include: [
+                        {
+                            model: models.song,
+                            attributes: ['id', 'album'],
+                        },
+                    ],
+                },
+            ],
+            order: [['createdAt', 'DESC'], [models.playlist_song, 'createdAt', 'DESC']],
             attributes: ['id', 'name', 'createdAt'],
         })
-        res.send(data)
+        res.send(
+            data.map((item: any) => {
+                return {
+                    id: item.id,
+                    name: item.name,
+                    createdAt: item.createdAt,
+                    totol: item.playlist_songs.length,
+                    cover: item.playlist_songs[0] ? item.playlist_songs[0].song.album.cover : null,
+                }
+            })
+        )
     })
     .post(
         '/',
