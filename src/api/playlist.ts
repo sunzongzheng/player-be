@@ -32,7 +32,7 @@ export default express()
                     id: item.id,
                     name: item.name,
                     createdAt: item.createdAt,
-                    totol: item.playlist_songs.length,
+                    total: item.playlist_songs.length,
                     cover: item.playlist_songs[0] ? item.playlist_songs[0].song.album.cover : null,
                 }
             })
