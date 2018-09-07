@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>MusicLake统计分析</title>
+    <!-- 引入 echarts.js -->
+    <script src="https://cdn.bootcss.com/echarts/4.1.0.rc2/echarts.min.js"></script>
+    <style>
+    html,
+    body {
+        height: 100%;
+    }
+    p {
+        padding-left: 6px;
+        font-weight: bold;
+        font-size: 18px;
+    }
+    </style>
+</head>
+<body>
+    <p>今日登陆用户数：{{uv}}
+    <p>今日新增用户数：{{newUser}}
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="width: 100%;height:400px;"></div>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var option = {{@ tableOption}}
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+</body>
+</html>

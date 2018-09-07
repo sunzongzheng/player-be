@@ -8,6 +8,10 @@ const app = express()
 const serverConfig: Config.server = config.get('server')
 const sessionConfig: Config.session = config.get('session')
 
+app.engine('art', require('express-art-template'))
+app.set('view options', {
+    debug: process.env.NODE_ENV !== 'production',
+})
 app.use(session(sessionConfig))
 app.use(bodyParser.json())
 app.use(middleware)
