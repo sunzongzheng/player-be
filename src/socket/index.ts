@@ -12,5 +12,8 @@ export default function initSocket(io: socketIO.Server) {
     })
     io.on('connection', socket => {
         io.emit('online total', io.eio.clientsCount)
+        socket.on('broadcast', packet => {
+            io.emit('broadcast', packet)
+        })
     })
 }
