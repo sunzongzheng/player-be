@@ -5,7 +5,7 @@ import encrypt from '@libs/encrypt'
 import mailer from '@libs/mail'
 import moment from 'moment'
 import axios from 'axios'
-import { BadRequest } from '@libs/error'
+import { BadRequest, Unauthorized } from '@libs/error'
 import platform from 'platform'
 import express from '@libs/express'
 
@@ -120,4 +120,21 @@ export async function getUnionID(access_token: string): Promise<string> {
         throw new BadRequest(parseData.error_description, parseData)
     }
     return parseData.unionid
+}
+
+export function checkToken(token: string | undefined): number {
+    if (token) {
+        const entry = encrypt.decode(token)
+        if (entry && entry.id) {
+            if (entry.expire && moment(entry.expire).isBefore(moment())) {
+                throw new Unauthorized('登录过期')
+            } else {
+                return entry.id
+            }
+        } else {
+            throw new Unauthorized('尚未登录')
+        }
+    } else {
+        throw new Unauthorized('尚未登录')
+    }
 }
