@@ -26,7 +26,7 @@ export default (sequelize: Sequelize.Sequelize) => {
                 type: Sequelize.JSON,
             },
             from: {
-                type: Sequelize.STRING,
+                type: Sequelize.ENUM('qq'),
             },
         },
         {

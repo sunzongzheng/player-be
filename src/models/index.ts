@@ -54,6 +54,10 @@ db.user.hasMany(db.playlist, {
     foreignKey: 'user_id',
     sourceKey: 'id',
 })
+db.user.hasMany(db.log_login, {
+    foreignKey: 'user_id',
+    sourceKey: 'id',
+})
 
 /* 歌曲表 */
 db.song.belongsToMany(db.playlist, {
@@ -63,6 +67,12 @@ db.song.belongsToMany(db.playlist, {
 db.song.hasMany(db.playlist_song, {
     foreignKey: 'song_id',
     sourceKey: 'id',
+})
+
+/* 登陆日志表 */
+db.log_login.belongsTo(db.user, {
+    foreignKey: 'user_id',
+    targetKey: 'id',
 })
 
 db.sequelize = sequelize

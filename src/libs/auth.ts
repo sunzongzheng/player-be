@@ -75,6 +75,11 @@ export async function qqAuthWrite(req: express.Request, options: OPTIONS): Promi
         } else if (platformInfo.os.family) {
             login_platform = platformInfo.os.family
         }
+        models.log_login.create({
+            user_id: info.id,
+            from: info.from,
+            platform: login_platform,
+        })
     } catch (e) {
         console.log(e)
     }

@@ -43,6 +43,11 @@ router.get('/', async (req, res) => {
             } else if (platformInfo.os.family) {
                 login_platform = platformInfo.os.family
             }
+            models.log_login.create({
+                user_id: session.meta.id,
+                from: 'token',
+                platform: login_platform,
+            })
         } catch (e) {
             console.log(e)
         }
