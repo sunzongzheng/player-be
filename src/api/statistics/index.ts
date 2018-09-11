@@ -19,9 +19,12 @@ router.get('/', async (req, res) => {
             date: date.format('YYYY-MM-DD'),
             newUser: 0,
             loginUser: 0,
+            androidLoginUser: 0,
+            pcLoginUser: 0,
         })
     }
 
+    // 新增用户统计
     const newUserStatistics = await models.user.findAll({
         where: {
             createdAt: {
@@ -39,6 +42,7 @@ router.get('/', async (req, res) => {
         const index = moment(date).diff(moment(start), 'day')
         statisticsData[index].newUser += item.dataValues.count
     })
+    // 当日新增用户
     const newUser = await models.user.findAll({
         where: {
             createdAt: {
@@ -46,6 +50,7 @@ router.get('/', async (req, res) => {
             },
         },
     })
+    // 登录用户统计
     const uvStatistics = await models.log_login.findAll({
         where: {
             createdAt: {
@@ -63,6 +68,7 @@ router.get('/', async (req, res) => {
         const index = moment(date).diff(moment(start), 'day')
         statisticsData[index].loginUser += item.dataValues.count
     })
+    // 当日登录用户
     const uv = await models.user.findAll({
         where: {
             updatedAt: {
@@ -70,34 +76,54 @@ router.get('/', async (req, res) => {
             },
         },
     })
+    // 安卓登录用户统计
+    const AndroidUvStatistics = await models.log_login.findAll({
+        where: {
+            createdAt: {
+                [Op.gte]: new Date(start),
+            },
+            platform: '安卓',
+        },
+        attributes: [
+            [Sequelize.fn('COUNT', Sequelize.fn('DISTINCT', Sequelize.col('user_id'))), 'count'],
+            [Sequelize.fn('DATE', Sequelize.col('createdAt')), 'createdAt'],
+        ],
+        group: Sequelize.fn('DATE', Sequelize.col('createdAt')),
+    })
+    AndroidUvStatistics.forEach((item: any) => {
+        const date = item.dataValues.createdAt
+        const index = moment(date).diff(moment(start), 'day')
+        statisticsData[index].androidLoginUser += item.dataValues.count
+    })
+    // PC登录用户统计
+    const pcUvStatistics = await models.log_login.findAll({
+        where: {
+            createdAt: {
+                [Op.gte]: new Date(start),
+            },
+            platform: {
+                [Op.ne]: '安卓',
+            },
+        },
+        attributes: [
+            [Sequelize.fn('COUNT', Sequelize.fn('DISTINCT', Sequelize.col('user_id'))), 'count'],
+            [Sequelize.fn('DATE', Sequelize.col('createdAt')), 'createdAt'],
+        ],
+        group: Sequelize.fn('DATE', Sequelize.col('createdAt')),
+    })
+    pcUvStatistics.forEach((item: any) => {
+        const date = item.dataValues.createdAt
+        const index = moment(date).diff(moment(start), 'day')
+        statisticsData[index].pcLoginUser += item.dataValues.count
+    })
     res.render(__dirname + '/index.art', {
-        tableOption: JSON.stringify({
-            title: {
-                text: '最近一个月新增用户统计',
-            },
-            tooltip: {},
-            legend: {
-                data: ['新增用户数', '登录用户数'],
-            },
-            xAxis: {
-                data: statisticsData.map((item: any) => item.date),
-            },
-            yAxis: {},
-            series: [
-                {
-                    name: '新增用户数',
-                    type: 'line',
-                    data: statisticsData.map((item: any) => item.newUser),
-                },
-                {
-                    name: '登录用户数',
-                    type: 'line',
-                    data: statisticsData.map((item: any) => item.loginUser),
-                },
-            ],
-        }),
+        xAxis: JSON.stringify(statisticsData.map((item: any) => item.date)),
+        newUserStatistics: JSON.stringify(statisticsData.map((item: any) => item.newUser)),
         newUser: newUser.length,
-        uv: uv.length,
+        loginUserStatistics: JSON.stringify(statisticsData.map((item: any) => item.loginUser)),
+        loginUser: uv.length,
+        androidLoginUserStatics: JSON.stringify(statisticsData.map((item: any) => item.androidLoginUser)),
+        pcLoginUserStatics: JSON.stringify(statisticsData.map((item: any) => item.pcLoginUser)),
     })
 })
 

@@ -18,19 +18,49 @@
     </style>
 </head>
 <body>
-    <p>今日登陆用户数：{{uv}}
+    <p>今日登陆用户数：{{loginUser}}
     <p>今日新增用户数：{{newUser}}
     <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-    <div id="main" style="width: 100%;height:400px;"></div>
+    <div id="chart1" style="width: 100%;height:400px;"></div>
+    <div id="chart2" style="width: 100%;height:400px;"></div>
+    <div id="chart3" style="width: 100%;height:400px;"></div>
+    <div id="chart4" style="width: 100%;height:400px;"></div>
     <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('main'));
+        const chart1 = echarts.init(document.getElementById('chart1'))
+        const chart2 = echarts.init(document.getElementById('chart2'))
+        const chart3 = echarts.init(document.getElementById('chart3'))
+        const chart4 = echarts.init(document.getElementById('chart4'))
 
         // 指定图表的配置项和数据
-        var option = {{@ tableOption}}
+        function getOption(title, xAxis, data) {
+            return {
+                title: {
+                    text: `${title}统计`,
+                },
+                tooltip: {},
+                legend: {
+                    data: [title],
+                },
+                xAxis: {
+                    data: xAxis
+                },
+                yAxis: {},
+                series: [
+                    {
+                        name: title,
+                        type: 'line',
+                        data
+                    }
+                ],
+            }
+        }
 
         // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
+        chart1.setOption(getOption('新增用户数', {{@ xAxis}}, {{@ newUserStatistics}}))
+        chart2.setOption(getOption('登录用户数', {{@ xAxis}}, {{@ loginUserStatistics}}))
+        chart3.setOption(getOption('安卓登录用户数', {{@ xAxis}}, {{@ androidLoginUserStatics}}))
+        chart4.setOption(getOption('PC登录用户数', {{@ xAxis}}, {{@ pcLoginUserStatics}}))
     </script>
 </body>
 </html>
