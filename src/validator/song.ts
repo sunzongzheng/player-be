@@ -74,7 +74,7 @@ export const cp: ValidationParamSchema = {
 export default {
     id,
     vendor,
-    commentId,
+    // commentId,
     name,
     album,
     artists,

@@ -75,7 +75,6 @@ export default express()
                     vendor: req.body.vendor,
                 }
                 const defaults = {
-                    commentId: req.body.commentId.toString(),
                     name: req.body.name,
                     album: req.body.album,
                     artists: req.body.artists,
@@ -181,7 +180,6 @@ export default express()
                                 vendor,
                             }
                             const defaults = {
-                                commentId: curSongInfo.id.toString(),
                                 name: curSongInfo.name,
                                 album: curSongInfo.album,
                                 artists: curSongInfo.artists,
@@ -330,7 +328,6 @@ export default express()
                             vendor: item.vendor,
                         }
                         const defaults = {
-                            commentId: info.id.toString(),
                             name: info.name,
                             album: info.album,
                             artists: info.artists,

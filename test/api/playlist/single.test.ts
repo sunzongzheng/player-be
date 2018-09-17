@@ -146,17 +146,17 @@ describe('/playlist/:id', () => {
                 expect(res.status).to.equal(400)
             })
     })
-    it('收藏歌曲 不传commentId 400', () => {
-        const params = _.cloneDeep(defaultSong)
-        delete params.commentId
-        return agent
-            .post(URL)
-            .set('accesstoken', user.accesstoken)
-            .send(params)
-            .then(res => {
-                expect(res.status).to.equal(400)
-            })
-    })
+    // it('收藏歌曲 不传commentId 400', () => {
+    //     const params = _.cloneDeep(defaultSong)
+    //     delete params.commentId
+    //     return agent
+    //         .post(URL)
+    //         .set('accesstoken', user.accesstoken)
+    //         .send(params)
+    //         .then(res => {
+    //             expect(res.status).to.equal(400)
+    //         })
+    // })
     it('收藏歌曲 不传name 400', () => {
         const params = _.cloneDeep(defaultSong)
         delete params.name

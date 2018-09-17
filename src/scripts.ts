@@ -6,6 +6,7 @@ import config from 'config'
 import _ from 'lodash'
 import { vendor } from '@types'
 import redis from '@redis'
+import { Op } from 'sequelize'
 
 export async function updateSongInfo(): Promise<void> {
     const songs = await models.song.findAll()
@@ -19,9 +20,7 @@ export async function updateSongInfo(): Promise<void> {
         songsList[item.vendor].push(item)
     })
     const doUpdate = async (vendor: vendor, list: Array<Schema.song>) => {
-        const ids = list.map(
-            item => (vendor === 'qq' && item.commentId && item.commentId !== 'undefined' ? item.commentId : item.songId)
-        )
+        const ids = list.map(item => item.songId)
         const data = await musicApi.getBatchSongDetail(vendor, ids)
         if (data.status) {
             const songsObject: {
@@ -34,17 +33,14 @@ export async function updateSongInfo(): Promise<void> {
             for (let info of list) {
                 // 已存的信息
                 const defaultInfo = {
-                    commentId: info.commentId + '',
                     name: info.name,
                     artists: info.artists,
                     cp: info.cp,
                 }
-                const songId = info.commentId && info.commentId !== 'undefined' ? info.commentId : info.songId
-                const item = songsObject[songId]
+                const item = songsObject[info.songId]
                 if (item) {
                     // 待更新的信息
                     const updateInfo = {
-                        commentId: item.id + '',
                         name: item.name,
                         artists: item.artists,
                         cp: item.cp,
@@ -108,36 +104,58 @@ export async function updateSongInfo(): Promise<void> {
     console.log('updateSongInfo down')
 }
 
-export async function updateQQCommentId(): Promise<void> {
+export async function updateQQSongId(): Promise<void> {
     const songs = await models.song.findAll({
         where: {
             vendor: 'qq',
+            songId: {
+                [Op.ne]: Sequelize.col('commentId'),
+            },
         },
     })
-    // 挨个更新
     for (let item of songs) {
-        const info = await musicApi.qq.getSongDetail(item.songId, false, 'songmid')
-        await new Promise(resolve => {
-            setTimeout(() => {
-                resolve()
-            }, 500)
-        })
-        if (!info.status) {
-            console.log('cannot get info: ', item.name, item.songId)
-            continue
+        try {
+            // console.log(item)
+            models.song
+                .update(
+                    {
+                        songId: item.commentId,
+                    },
+                    {
+                        where: {
+                            id: item.id,
+                        },
+                    }
+                )
+                .then(() => {
+                    console.log('update success: ', item.name)
+                })
+                .catch(async (e: any) => {
+                    // 更新失败 理论上来说代表songId重复了
+                    // 先找到id
+                    const lastestInfo = await models.song.find({
+                        where: {
+                            songId: item.commentId,
+                        },
+                    })
+                    // 更新
+                    await models.playlist_song.update(
+                        {
+                            song_id: lastestInfo.id,
+                        },
+                        {
+                            where: {
+                                song_id: item.id,
+                            },
+                        }
+                    )
+                    console.log('去除重复歌曲成功: ', item.name)
+                })
+        } catch (e) {
+            console.log(item)
         }
-        await models.song.update(
-            {
-                commentId: info.data.id,
-            },
-            {
-                where: {
-                    id: item.id,
-                },
-            }
-        )
-        console.log('update success: ', item.name)
     }
+    console.log('updateQQSongId Success')
 }
 
 export async function getNeteaseRank(): Promise<void> {
