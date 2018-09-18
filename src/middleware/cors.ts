@@ -3,7 +3,11 @@ import express from '@libs/express'
 const router = express()
 
 router.all('*', (req, res, next) => {
-    const allowOrigins: Array<string | undefined> = ['https://graph.qq.com', 'http://localhost:9080']
+    const allowOrigins: Array<string | undefined> = [
+        'https://graph.qq.com',
+        'http://localhost:9080',
+        'https://music-lake.zzsun.cc',
+    ]
     const allowHeaders = [
         'Content-Type',
         'Content-Length',
