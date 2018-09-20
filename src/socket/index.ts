@@ -22,6 +22,10 @@ export default function initSocket(io: socketIO.Server) {
         try {
             // 有人连接成功 广播 在线人数 和 已登录用户
             io.emit('online total', io.eio.clientsCount)
+            if (socket.userInfo) {
+                console.log('someone join', socket.userInfo)
+                io.emit('someone join', socket.userInfo)
+            }
             io.emit(
                 'online users',
                 Object.keys(io.sockets.connected)
@@ -31,6 +35,10 @@ export default function initSocket(io: socketIO.Server) {
             socket.on('disconnect', packet => {
                 // 断开连接 再次广播 在线人数 和 已登录用户
                 io.emit('online total', io.eio.clientsCount)
+                if (socket.userInfo) {
+                    console.log('someone leave', socket.userInfo)
+                    io.emit('someone leave', socket.userInfo)
+                }
                 io.emit(
                     'online users',
                     Object.keys(io.sockets.connected)
