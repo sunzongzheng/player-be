@@ -3,6 +3,7 @@
     {
       "name": "player-be-production",
       "script": "./src/index.ts",
+      "instances": 2,
       "watch": false,
       "env": {
         "NODE_ENV": "production"
