@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:wb="http://open.weibo.com/wb">
+<html xmlns:wb="https://open.weibo.com/wb">
 <head>
     <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>MusicLake统计分析</title>
     <!-- 引入 echarts.js -->
     <script src="https://cdn.bootcss.com/echarts/4.1.0.rc2/echarts.min.js"></script>
@@ -63,6 +64,6 @@
         chart3.setOption(getOption('安卓登录用户数', {{@ xAxis}}, {{@ androidLoginUserStatics}}))
         chart4.setOption(getOption('PC登录用户数', {{@ xAxis}}, {{@ pcLoginUserStatics}}))
     </script>
-    <script src="https://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>
