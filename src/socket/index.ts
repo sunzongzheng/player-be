@@ -49,17 +49,16 @@ export default function initSocket(io: socketIO.Server) {
             // socket中间件 发送消息必须登录
             socket.use((packet, next) => {
                 if (socket.userInfo) {
+                    io.emit('broadcast', {
+                        type: packet[0],
+                        userInfo: socket.userInfo,
+                        message: packet[1],
+                        datetime: moment().format('YYYY-MM-DD HH:mm:ss'),
+                    })
                     return next()
                 } else {
                     return next(new Error('尚未登录'))
                 }
-            })
-            socket.on('broadcast', packet => {
-                io.emit('broadcast', {
-                    userInfo: socket.userInfo,
-                    message: packet,
-                    datetime: moment().format('YYYY-MM-DD HH:mm:ss'),
-                })
             })
         } catch (e) {
             console.warn(e)
