@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:wb="http://open.weibo.com/wb">
 <head>
     <meta charset="utf-8">
     <title>MusicLake统计分析</title>
@@ -20,6 +20,7 @@
 <body>
     <p>今日登陆用户数：{{loginUser}}
     <p>今日新增用户数：{{newUser}}
+    <wb:share-button appkey="965369934" addition="number" type="button" style="float: right;"></wb:share-button>
     <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
     <div id="chart1" style="width: 100%;height:400px;"></div>
     <div id="chart2" style="width: 100%;height:400px;"></div>
@@ -62,5 +63,6 @@
         chart3.setOption(getOption('安卓登录用户数', {{@ xAxis}}, {{@ androidLoginUserStatics}}))
         chart4.setOption(getOption('PC登录用户数', {{@ xAxis}}, {{@ pcLoginUserStatics}}))
     </script>
+    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>
