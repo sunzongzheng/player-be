@@ -63,6 +63,6 @@
         chart3.setOption(getOption('安卓登录用户数', {{@ xAxis}}, {{@ androidLoginUserStatics}}))
         chart4.setOption(getOption('PC登录用户数', {{@ xAxis}}, {{@ pcLoginUserStatics}}))
     </script>
-    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>
