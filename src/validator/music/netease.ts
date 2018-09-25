@@ -1,4 +1,5 @@
 import { ValidationParamSchema } from 'express-validator/check'
+import { isUndefined } from 'util'
 
 // 排行榜ids
 export const rankIds: ValidationParamSchema = {
@@ -29,7 +30,7 @@ export const limit: ValidationParamSchema = {
     in: ['query'],
     custom: {
         options: value => {
-            if (typeof value === 'undefined') return true
+            if (isUndefined(value)) return true
             const limit = Number(value)
             if (isNaN(limit) || limit < 0) {
                 return false

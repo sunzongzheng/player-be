@@ -168,3 +168,25 @@ export async function getNeteaseRank(): Promise<void> {
         }
     }
 }
+
+export async function getQQRank(): Promise<Array<Object>> {
+    const totalData = await musicApi.qq.getAllTopList()
+    if (totalData.status) {
+        const total = []
+        for (let single of totalData.data) {
+            const data = await musicApi.qq.getTopList(single.id)
+            if (data.status) {
+                data.data.id = single.id
+                total.push(data.data)
+                redis.set(`qq-rank-${single.id}`, JSON.stringify(data.data))
+            } else {
+                console.log(`获取QQ音乐排行榜失败：${i}, ${JSON.stringify(data)}`)
+            }
+        }
+        redis.set(`qq-rank-total`, JSON.stringify(total))
+        return total
+    } else {
+        console.log(`获取QQ音乐 全部排行榜失败, ${JSON.stringify(totalData)}`)
+        return []
+    }
+}
