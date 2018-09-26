@@ -1,5 +1,5 @@
 import express from '@libs/express'
-import { authWrite, generateToken, getUserInfo, getUnionID } from '../../../libs/auth'
+import { authWrite, generateToken } from '../../../libs/auth'
 import axios from 'axios'
 import { checkSchema, validationResult } from 'express-validator/check'
 
@@ -15,10 +15,10 @@ router.get(
                 negated: true,
             },
         },
-        openid: {
+        uid: {
             in: ['query'],
             isEmpty: {
-                errorMessage: 'openid不能为空',
+                errorMessage: 'uid不能为空',
                 negated: true,
             },
         },
@@ -26,14 +26,18 @@ router.get(
     async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         validationResult(req).throw()
         // 获取用户信息
-        const userInfo = await getUserInfo(req.query.access_token, req.query.openid)
-        // 获取unionID
-        const unionid = await getUnionID(req.query.access_token)
+        const data = await axios.get('https://api.weibo.com/2/users/show.json', {
+            params: {
+                uid: req.query.uid,
+                access_token: req.query.access_token,
+            },
+        })
+        const userInfo = data.data
         // 存储
         const info = await authWrite(req, {
-            unionid,
-            nickname: userInfo.nickname,
-            avatar: userInfo.figureurl_qq_2,
+            unionid: userInfo.id,
+            nickname: userInfo.name,
+            avatar: userInfo.avatar_large,
             sourceData: userInfo,
             from: 'weibo',
         })

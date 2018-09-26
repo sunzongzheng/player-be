@@ -12,6 +12,7 @@ const noPermissionList = [
     '/auth/qq/callback',
     '/auth/weibo/callback',
     '/auth/qq/android',
+    '/auth/weibo/android',
     '/music/netease/rank',
     '/music/qq/rank',
     '/statistics',
