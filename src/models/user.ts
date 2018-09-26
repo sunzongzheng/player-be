@@ -1,4 +1,4 @@
-import Sequelize, { json } from 'sequelize'
+import Sequelize from 'sequelize'
 
 export default (sequelize: Sequelize.Sequelize) => {
     return sequelize.define(
@@ -26,7 +26,7 @@ export default (sequelize: Sequelize.Sequelize) => {
                 type: Sequelize.JSON,
             },
             from: {
-                type: Sequelize.ENUM('qq'),
+                type: Sequelize.ENUM('qq', 'weibo'),
             },
         },
         {
