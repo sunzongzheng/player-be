@@ -8,7 +8,9 @@ import moment from 'moment'
 const router = express()
 const noPermissionList = [
     '/auth/qq',
+    '/auth/weibo',
     '/auth/qq/callback',
+    '/auth/weibo/callback',
     '/auth/qq/android',
     '/music/netease/rank',
     '/music/qq/rank',

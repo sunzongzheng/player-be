@@ -1,7 +1,7 @@
 import express from '@libs/express'
 import passport from 'passport'
 import { RequestWithUser } from 'passport-qq'
-import { qqAuthWrite, generateToken } from '@libs/auth'
+import { authWrite, generateToken } from '@libs/auth'
 import { BadRequest } from '@libs/error'
 
 const router = express()
@@ -14,12 +14,12 @@ router.get('/', passport.authenticate('qq'), async (req, res, next) => {
         throw new BadRequest(user._json.msg)
     }
     const data = _req.user._json
-    const info = await qqAuthWrite(req, {
-        sn: _req.user.id,
+    const info = await authWrite(req, {
         unionid: _req.user.unionid,
         nickname: data.nickname,
         avatar: data.figureurl_qq_2,
         sourceData: data,
+        from: 'qq',
     })
     res.send({
         token: generateToken(info.id),

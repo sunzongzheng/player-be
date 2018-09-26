@@ -17,31 +17,20 @@ interface UpdateDataOption {
     nickname: string
     avatar: string
     sourceData: string
+    from?: string
 }
 
 interface OPTIONS extends UpdateDataOption {
-    sn: string
+    sn?: string
 }
 
-function findOrCreate(options: OPTIONS) {
+function findOrCreate(defaults: OPTIONS) {
     return models.user.findOrCreate({
         where: {
-            [Op.or]: [
-                {
-                    sn: options.sn,
-                },
-                {
-                    unionid: options.unionid,
-                },
-            ],
-            from: 'qq',
+            unionid: defaults.unionid,
+            from: defaults.from,
         },
-        defaults: {
-            unionid: options.unionid,
-            nickname: options.nickname,
-            avatar: options.avatar,
-            sourceData: options.sourceData,
-        },
+        defaults,
     })
 }
 
@@ -53,10 +42,10 @@ function update(id: number, updateData: UpdateDataOption) {
     })
 }
 
-export async function qqAuthWrite(req: express.Request, options: OPTIONS): Promise<Schema.user> {
+export async function authWrite(req: express.Request, options: OPTIONS): Promise<Schema.user> {
     // 不存在插入
     let result = await findOrCreate(options)
-    const info = result[0].dataValues
+    const info: Schema.user = result[0].dataValues
     // 存在更新
     if (!result[1]) {
         update(info.id, {
@@ -83,11 +72,16 @@ export async function qqAuthWrite(req: express.Request, options: OPTIONS): Promi
     } catch (e) {
         console.log(e)
     }
+    const meta: { [key: string]: string } = {
+        qq: 'QQ',
+        weibo: '微博',
+    }
+    const from = meta[info.from]
     // 邮件推送
     if (!notEmailArr.includes(info.id)) {
         mailer.send({
             to: emailConfig.to,
-            subject: '有用户通过QQ授权方式登录了系统',
+            subject: `有用户通过${from}授权方式登录了系统`,
             text: `${info.nickname}刚刚在${login_platform}平台上登录了系统`,
         })
     }

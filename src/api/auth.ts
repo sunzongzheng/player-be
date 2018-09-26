@@ -3,10 +3,13 @@ import passport from 'passport'
 import config from 'config'
 import axios from 'axios'
 import { Strategy as qqStrategy, StrategyOption } from 'passport-qq'
+import { Strategy as WeiboStrategy } from 'passport-weibo'
 import qq from './auth/qq'
+import weibo from './auth/weibo'
 
 const router = express()
 const qqStrategyOption: StrategyOption = config.get('qqStrategyOption')
+const weiboStrategyOption: StrategyOption = config.get('weiboStrategyOption')
 const serializeUser = (user: any, done: Function) => {
     done(null, user)
 }
@@ -24,8 +27,14 @@ passport.use(
         })
     })
 )
+passport.use(
+    new WeiboStrategy(weiboStrategyOption, async (accessToken, refreshToken, profile, done) => {
+        done(null, profile)
+    })
+)
 router.use(passport.initialize())
 router.use(passport.session())
 router.use('/qq', qq)
+router.use('/weibo', weibo)
 
 export default router

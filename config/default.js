@@ -19,27 +19,17 @@ module.exports = {
         logging: false,
         operatorsAliases: false
     },
-    oldSequelize: {
-        host: "127.0.0.1",
-        database: "database",
-        username: "username",
-        password: "password",
-        dialect: "mysql",
-        pool: {
-            max: 5,
-            min: 0,
-            idle: 10000
-        },
-        timezone: "+08:00",
-        logging: false,
-        operatorsAliases: false
-    },
     session: {
         secret: "secret",
         resave: false,
         saveUninitialized: false
     },
     qqStrategyOption: {
+        clientID: 100000,
+        clientSecret: "clientSecret",
+        callbackURL: "https://127.0.0.1:8080/auth/qq/callback"
+    },
+    weiboStrategyOption: {
         clientID: 100000,
         clientSecret: "clientSecret",
         callbackURL: "https://127.0.0.1:8080/auth/qq/callback"

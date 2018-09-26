@@ -35,7 +35,7 @@ router.get(
             nickname: userInfo.nickname,
             avatar: userInfo.figureurl_qq_2,
             sourceData: userInfo,
-            from: 'qq',
+            from: 'weibo',
         })
         res.send({
             token: generateToken(info.id),
