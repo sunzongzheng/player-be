@@ -19,7 +19,7 @@ router.get('/', passport.authenticate('weibo'), async (req, res, next) => {
     res.cookie('accesstoken', generateToken(info.id), {
         expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     })
-    res.status(200).end()
+    res.send('登录成功')
 })
 
 export default router
