@@ -10,9 +10,6 @@ export default (sequelize: Sequelize.Sequelize) => {
                 autoIncrement: true,
                 allowNull: false,
             },
-            sn: {
-                type: Sequelize.STRING,
-            },
             unionid: {
                 type: Sequelize.STRING,
             },
