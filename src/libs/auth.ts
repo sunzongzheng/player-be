@@ -54,6 +54,7 @@ export async function authWrite(req: express.Request, options: OPTIONS): Promise
             sourceData: options.sourceData,
             unionid: options.unionid,
         })
+        Object.assign(info, options)
     }
     let login_platform = '未知'
     try {
