@@ -58,6 +58,10 @@ db.user.hasMany(db.log_login, {
     foreignKey: 'user_id',
     sourceKey: 'id',
 })
+db.user.hasMany(db.chat_history, {
+    foreignKey: 'user_id',
+    sourceKey: 'id',
+})
 
 /* 歌曲表 */
 db.song.belongsToMany(db.playlist, {
@@ -71,6 +75,12 @@ db.song.hasMany(db.playlist_song, {
 
 /* 登陆日志表 */
 db.log_login.belongsTo(db.user, {
+    foreignKey: 'user_id',
+    targetKey: 'id',
+})
+
+/* 聊天消息记录表 */
+db.chat_history.belongsTo(db.user, {
     foreignKey: 'user_id',
     targetKey: 'id',
 })

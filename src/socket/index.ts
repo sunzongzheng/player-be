@@ -49,11 +49,20 @@ export default function initSocket(io: socketIO.Server) {
             // socket中间件 发送消息必须登录
             socket.use((packet, next) => {
                 if (socket.userInfo) {
+                    const datetime = moment().format('YYYY-MM-DD HH:mm:ss')
+                    const message = packet[1]
+                    const type = packet[0]
+                    models.chat_history.create({
+                        user_id: socket.userInfo.id,
+                        type,
+                        message,
+                        createdAt: datetime,
+                    })
                     io.emit('broadcast', {
-                        type: packet[0],
+                        type,
                         userInfo: socket.userInfo,
-                        message: packet[1],
-                        datetime: moment().format('YYYY-MM-DD HH:mm:ss'),
+                        message,
+                        datetime,
                     })
                     return next()
                 } else {
