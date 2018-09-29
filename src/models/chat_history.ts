@@ -13,7 +13,7 @@ export default (sequelize: Sequelize.Sequelize) => {
                 comment: '类型',
             },
             message: {
-                type: Sequelize.STRING,
+                type: Sequelize.TEXT,
                 comment: '内容',
             },
             createdAt: {
