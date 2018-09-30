@@ -13,7 +13,7 @@ export default function initSocket(io: socketIO.Server) {
                 id,
                 nickname,
                 avatar,
-                platform: headers['user-agent'].startsWith('okhttp') ? 'android' : headers.platform,
+                platform: headers['user-agent'].startsWith('okhttp') ? 'android' : headers.platform || 'pc',
             }
             return next()
         } catch (e) {
