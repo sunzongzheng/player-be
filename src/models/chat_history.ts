@@ -16,6 +16,10 @@ export default (sequelize: Sequelize.Sequelize) => {
                 type: Sequelize.TEXT,
                 comment: '内容',
             },
+            platform: {
+                type: Sequelize.STRING,
+                comment: '平台',
+            },
             createdAt: {
                 type: Sequelize.DATE,
                 defaultValue: Sequelize.NOW,

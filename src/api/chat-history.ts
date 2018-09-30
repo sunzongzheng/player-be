@@ -46,6 +46,7 @@ router.get(
                         id: item.user_id,
                         nickname: item.user.nickname,
                         avatar: item.user.avatar,
+                        platform: item.platform,
                     },
                     message: item.message,
                     datetime: moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),

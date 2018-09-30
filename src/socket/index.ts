@@ -6,12 +6,14 @@ export default function initSocket(io: socketIO.Server) {
     // auth
     io.use(async (socket, next) => {
         try {
-            const id = checkToken(socket.request.headers.accesstoken)
+            const headers = socket.request.headers
+            const id = checkToken(headers.accesstoken)
             const { nickname, avatar } = await models.user.findById(id)
             socket.userInfo = {
                 id,
                 nickname,
                 avatar,
+                platform: headers['user-agent'].startsWith('okhttp') ? 'android' : headers.platform,
             }
             return next()
         } catch (e) {
@@ -56,6 +58,7 @@ export default function initSocket(io: socketIO.Server) {
                         user_id: socket.userInfo.id,
                         type,
                         message,
+                        platform: socket.userInfo.platform,
                         createdAt: datetime,
                     })
                     io.emit('broadcast', {
