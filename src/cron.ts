@@ -7,7 +7,7 @@ export default function() {
         async () => {
             console.info('定时任务开始')
             // 更新歌曲信息
-            // await updateSongInfo()
+            await updateSongInfo()
             // 获取网易云排行榜
             await getNeteaseRank()
             // 获取QQ排行榜

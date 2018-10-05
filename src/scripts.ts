@@ -104,60 +104,6 @@ export async function updateSongInfo(): Promise<void> {
     console.log('updateSongInfo down')
 }
 
-export async function updateQQSongId(): Promise<void> {
-    const songs = await models.song.findAll({
-        where: {
-            vendor: 'qq',
-            songId: {
-                [Op.ne]: Sequelize.col('commentId'),
-            },
-        },
-    })
-    for (let item of songs) {
-        try {
-            // console.log(item)
-            models.song
-                .update(
-                    {
-                        songId: item.commentId,
-                    },
-                    {
-                        where: {
-                            id: item.id,
-                        },
-                    }
-                )
-                .then(() => {
-                    console.log('update success: ', item.name)
-                })
-                .catch(async (e: any) => {
-                    // 更新失败 理论上来说代表songId重复了
-                    // 先找到id
-                    const lastestInfo = await models.song.find({
-                        where: {
-                            songId: item.commentId,
-                        },
-                    })
-                    // 更新
-                    await models.playlist_song.update(
-                        {
-                            song_id: lastestInfo.id,
-                        },
-                        {
-                            where: {
-                                song_id: item.id,
-                            },
-                        }
-                    )
-                    console.log('去除重复歌曲成功: ', item.name)
-                })
-        } catch (e) {
-            console.log(item)
-        }
-    }
-    console.log('updateQQSongId Success')
-}
-
 export async function getNeteaseRank(): Promise<void> {
     for (let i = 0; i <= 21; i++) {
         const data = await musicApi.netease.getTopList(i.toString())
