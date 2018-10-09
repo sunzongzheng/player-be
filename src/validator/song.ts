@@ -1,8 +1,6 @@
 import { ValidationParamSchema, check } from 'express-validator/check'
-
-const isUndefined = (value: any) => {
-    return typeof value === 'undefined'
-}
+import { isUndefined, isBoolean, isObject, isNull } from 'util'
+import { isEqual } from 'lodash'
 
 export const id: ValidationParamSchema = {
     in: ['body'],
@@ -71,6 +69,37 @@ export const cp: ValidationParamSchema = {
         errorMessage: 'cp格式错误',
     },
 }
+export const dl: ValidationParamSchema = {
+    in: ['body'],
+    custom: {
+        options: (value: any) => {
+            if (isUndefined(value) || isNull(value)) {
+                return true
+            } else if (!isBoolean(value)) {
+                return false
+            }
+            return true
+        },
+        errorMessage: 'dl格式错误',
+    },
+}
+export const quality: ValidationParamSchema = {
+    in: ['body'],
+    custom: {
+        options: (value: any) => {
+            if (isUndefined(value) || isNull(value)) {
+                return true
+            } else if (!isObject(value)) {
+                return false
+            } else if (isEqual(Object.keys(value).sort(), ['192', '320', '999'].sort())) {
+                return true
+            } else {
+                return false
+            }
+        },
+        errorMessage: 'quality格式错误',
+    },
+}
 export default {
     id,
     vendor,
@@ -79,4 +108,6 @@ export default {
     album,
     artists,
     cp,
+    dl,
+    quality,
 }

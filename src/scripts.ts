@@ -36,6 +36,8 @@ export async function updateSongInfo(): Promise<void> {
                     name: info.name,
                     artists: info.artists,
                     cp: info.cp,
+                    dl: info.dl,
+                    quality: info.quality,
                 }
                 const item = songsObject[info.songId]
                 if (item) {
@@ -44,6 +46,8 @@ export async function updateSongInfo(): Promise<void> {
                         name: item.name,
                         artists: item.artists,
                         cp: item.cp,
+                        dl: item.dl,
+                        quality: item.quality,
                     }
                     // 比对是否相等
                     if (!_.isEqual(updateInfo, defaultInfo)) {
@@ -60,7 +64,7 @@ export async function updateSongInfo(): Promise<void> {
                     }
                 } else {
                     // 歌曲信息不存在 代表音乐平台把歌曲删了
-                    console.log(info.vendor, info.name, info.songId)
+                    console.warn(info.vendor, info.name, info.songId)
                     if (!info.cp) {
                         try {
                             await models.song.update(
@@ -87,18 +91,23 @@ export async function updateSongInfo(): Promise<void> {
     for (let key of Object.keys(songsList)) {
         const _key = key as vendor
         const list = songsList[_key]
-        if (_key === vendor.qq) {
-            let arr: Array<Schema.song> = []
-            for (let index = 0; index < list.length; index++) {
-                arr.push(list[index])
-                if (arr.length === 50 || index + 1 === list.length) {
-                    // 每50首更新一次
-                    await doUpdate(_key, arr)
-                    arr = []
-                }
+        const limit = {
+            [vendor.qq]: 50,
+            [vendor.netease]: 1000,
+            [vendor.xiami]: 250,
+        }[_key]
+        let arr: Array<Schema.song> = []
+        for (let index = 0; index < list.length; index++) {
+            arr.push(list[index])
+            if (arr.length === limit || index + 1 === list.length) {
+                await doUpdate(_key, arr)
+                arr = []
+                await new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve()
+                    }, 60 * 1000)
+                })
             }
-        } else {
-            await doUpdate(_key, list)
         }
     }
     console.log('updateSongInfo down')

@@ -34,7 +34,18 @@ export default express()
             include: [
                 {
                     model: models.song,
-                    attributes: ['id', 'songId', 'vendor', 'commentId', 'name', 'album', 'artists', 'cp'],
+                    attributes: [
+                        'id',
+                        'songId',
+                        'vendor',
+                        'commentId',
+                        'name',
+                        'album',
+                        'artists',
+                        'cp',
+                        'dl',
+                        'quality',
+                    ],
                 },
             ],
             order: [['createdAt', 'DESC']],
@@ -79,6 +90,8 @@ export default express()
                     album: req.body.album,
                     artists: req.body.artists,
                     cp: req.body.cp,
+                    dl: req.body.dl,
+                    quality: req.body.quality,
                 }
                 // 更新或插入 song表
                 return models.song

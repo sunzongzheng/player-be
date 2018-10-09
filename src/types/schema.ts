@@ -39,5 +39,11 @@ declare namespace Schema {
             name: string
         }>
         cp: boolean
+        dl: boolean
+        quality: {
+            192: boolean
+            320: boolean
+            999: boolean
+        }
     }
 }

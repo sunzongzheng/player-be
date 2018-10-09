@@ -38,6 +38,15 @@ export default (sequelize: Sequelize.Sequelize) => {
                 type: Sequelize.BOOLEAN,
                 comment: '是否被限制导致无法播放',
             },
+            dl: {
+                type: Sequelize.BOOLEAN,
+                comment: '是否能免费下载',
+                defaultValue: false,
+            },
+            quality: {
+                type: Sequelize.JSON,
+                comment: '音质',
+            },
         },
         {
             indexes: [
