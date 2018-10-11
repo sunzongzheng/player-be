@@ -56,5 +56,8 @@ module.exports = {
         path: '/webhook',
         port: 8338,
         secret: 'webhook'
-    }
+    },
+    blacklist: [
+        1
+    ]
 }

@@ -5,7 +5,7 @@ import encrypt from '@libs/encrypt'
 import mailer from '@libs/mail'
 import moment from 'moment'
 import axios from 'axios'
-import { BadRequest, Unauthorized } from '@libs/error'
+import { BadRequest, Unauthorized, Forbidden } from '@libs/error'
 import platform from 'platform'
 import express from '@libs/express'
 
@@ -117,10 +117,15 @@ export async function getUnionID(access_token: string): Promise<string> {
     return parseData.unionid
 }
 
+const blacklist: Array<number> = config.get('blacklist') || []
+
 export function checkToken(token: string | undefined): number {
     if (token) {
         const entry = encrypt.decode(token)
         if (entry && entry.id) {
+            if (blacklist.includes(entry.id)) {
+                throw new Forbidden('本程序不适合低能儿使用')
+            }
             if (entry.expire && moment(entry.expire).isBefore(moment())) {
                 throw new Unauthorized('登录过期')
             } else {
