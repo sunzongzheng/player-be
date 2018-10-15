@@ -23,17 +23,18 @@ const io = socketIO(server)
 
 initSocket(io)
 
+process.on('SIGINT', function() {
+    server.close(function(err) {
+        process.exit(err ? 1 : 0)
+    })
+})
+
 export function createServer() {
     server.listen(serverConfig.port, () => {
         process.send && process.send('ready')
         if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') {
             console.log(`server running @${serverConfig.port}`)
         }
-    })
-    process.on('SIGINT', function() {
-        server.close(function(err) {
-            process.exit(err ? 1 : 0)
-        })
     })
 }
 
