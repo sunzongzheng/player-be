@@ -155,7 +155,7 @@ export function webhookScript() {
             'git reset --hard origin/master',
             'npm i',
             'npm update @suen/music-api',
-            'pm2 reload player-be-production',
+            'pm2 reload player-be-production player-be-webhook-production',
         ].join(' && '),
         {
             cwd: `${__dirname}/../`,

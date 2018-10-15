@@ -16,7 +16,8 @@
       "name": "player-be-webhook-production",
       "script": "./src/webhook.ts",
       "watch": true,
-      "interpreter": "./node_modules/.bin/ts-node"
+      "interpreter": "./node_modules/.bin/ts-node",
+      "interpreter_args": "-r tsconfig-paths/register"
     }
   ]
 }
