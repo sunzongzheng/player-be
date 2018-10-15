@@ -7,6 +7,7 @@ import _ from 'lodash'
 import { vendor } from '@types'
 import redis from '@redis'
 import { Op } from 'sequelize'
+import { execSync } from 'child_process'
 
 export async function updateSongInfo(): Promise<void> {
     const songs = await models.song.findAll()
@@ -144,4 +145,21 @@ export async function getQQRank(): Promise<Array<Object>> {
         console.log(`获取QQ音乐 全部排行榜失败, ${JSON.stringify(totalData)}`)
         return []
     }
+}
+
+export function webhookScript() {
+    console.log('webhook钩子开始执行')
+    execSync(
+        [
+            'git fetch --all',
+            'git reset --hard origin/master',
+            'npm i',
+            'npm update @suen/music-api',
+            'pm2 reload player-be-production',
+        ].join(' && '),
+        {
+            cwd: `${__dirname}/../`,
+        }
+    )
+    console.log('webhook钩子执行结束')
 }

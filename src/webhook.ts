@@ -1,8 +1,8 @@
 import http from 'http'
 import createHandler from 'github-webhook-handler'
 import config from 'config'
-import { exec } from 'child_process'
 import moment from 'moment'
+import { webhookScript } from './scripts'
 
 const webhookConfig: Config.webhook = config.get('webhook')
 
@@ -27,24 +27,10 @@ handler.on('error', err => {
 })
 
 handler.on('push', event => {
-    if (event.payload.ref === 'refs/heads/master') {
-        exec(
-            [
-                `cd ${__dirname}/../`,
-                'git fetch --all',
-                'git reset --hard origin/master',
-                'npm i',
-                'npm update @suen/music-api',
-                'pm2 reload player-be-production',
-            ].join(' && '),
-            err => {
-                if (err instanceof Error) {
-                    throw err
-                }
-            }
-        )
-    }
     console.log('%s: Received a push event for %s to %s', getMoment(), event.payload.repository.name, event.payload.ref)
+    if (event.payload.ref === 'refs/heads/master') {
+        webhookScript()
+    }
 })
 
 handler.on('issues', event => {

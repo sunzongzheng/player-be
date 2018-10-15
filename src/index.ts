@@ -6,10 +6,10 @@ models.sequelize
     .sync({
         alter: true,
     })
-    .then(() => {
-        createCron()
-        createServer()
-    })
     .catch((e: Error) => {
         throw e
+    })
+    .finally(() => {
+        createCron()
+        createServer()
     })
