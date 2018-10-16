@@ -1,6 +1,7 @@
 import express from '@libs/express'
 import session from 'express-session'
 import bodyParser from 'body-parser'
+import redis from 'socket.io-redis'
 import config from 'config'
 import middleware from './middleware'
 import socketIO from 'socket.io'
@@ -18,19 +19,23 @@ app.use(session(sessionConfig))
 app.use(bodyParser.json())
 app.use(middleware)
 
-const server = require('http').createServer(app)
-const io = socketIO(server)
+const expressServer = require('http').createServer(app)
+const socketServer = require('http').createServer()
+const io = socketIO(socketServer)
+
+io.adapter(redis({ host: 'localhost', port: 6379 }))
 
 initSocket(io)
 
 process.on('SIGINT', function() {
-    server.close(function(err) {
+    expressServer.close(function(err) {
         process.exit(err ? 1 : 0)
     })
 })
 
 export function createServer() {
-    server.listen(serverConfig.port, () => {
+    socketServer.listen(serverConfig.socket + parseInt(process.env.NODE_APP_INSTANCE))
+    expressServer.listen(serverConfig.port, () => {
         process.send && process.send('ready')
         if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') {
             console.log(`server running @${serverConfig.port}`)

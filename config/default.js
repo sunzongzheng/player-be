@@ -2,7 +2,8 @@ module.exports = {
     env: "development",
     server: {
         host: "127.0.0.1",
-        port: 8080
+        port: 8080,
+        socket: 8081
     },
     sequelize: {
         host: "127.0.0.1",
@@ -58,6 +59,6 @@ module.exports = {
         secret: 'webhook'
     },
     blacklist: [
-        1
+        100
     ]
 }

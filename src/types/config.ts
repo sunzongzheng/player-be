@@ -2,6 +2,7 @@ declare namespace Config {
     interface server {
         host: string
         port: number
+        socket: number
     }
     interface sequelize {
         host: string
