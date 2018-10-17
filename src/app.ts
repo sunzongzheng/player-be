@@ -28,13 +28,15 @@ io.adapter(redis({ host: 'localhost', port: 6379 }))
 initSocket(io)
 
 process.on('SIGINT', function() {
-    expressServer.close(function(err) {
+    expressServer.close(function(err: any) {
         process.exit(err ? 1 : 0)
     })
 })
 
+const instanceNum = typeof process.env.NODE_APP_INSTANCE === 'undefined' ? 0 : parseInt(process.env.NODE_APP_INSTANCE)
+
 export function createServer() {
-    socketServer.listen(serverConfig.socket + parseInt(process.env.NODE_APP_INSTANCE))
+    socketServer.listen(serverConfig.socket + instanceNum)
     expressServer.listen(serverConfig.port, () => {
         process.send && process.send('ready')
         if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') {
