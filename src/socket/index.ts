@@ -2,6 +2,10 @@ import models from '@models'
 import socketIO from 'socket.io'
 import { checkToken } from '@libs/auth'
 import moment from 'moment'
+import config from 'config'
+
+const administrators: Array<number> = config.get('administrators') || []
+
 export default function initSocket(io: socketIO.Server) {
     // auth
     io.use(async (socket, next) => {
@@ -51,6 +55,7 @@ export default function initSocket(io: socketIO.Server) {
             // socket中间件 发送消息必须登录
             socket.use((packet, next) => {
                 if (socket.userInfo) {
+                    if (!administrators.includes(socket.userInfo.id)) return next()
                     const datetime = moment().format('YYYY-MM-DD HH:mm:ss')
                     const message = packet[1]
                     const type = packet[0]

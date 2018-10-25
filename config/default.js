@@ -60,5 +60,6 @@ module.exports = {
     },
     blacklist: [
         100
-    ]
+    ],
+    administrators: []
 }
