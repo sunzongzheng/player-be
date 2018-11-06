@@ -273,78 +273,28 @@ export default express()
         async (req, res) => {
             validate(req).throw()
             const collects: Array<RequestParams.collects> = req.body.collects
+
+            const songs = await musicApi.getAnyVendorSongDetail(collects)
             const failedList: Array<{ id: number | string; msg: string; log?: any }> = []
-            const collectsDetailObject: { [key: string]: musicInfo } = {} // 详情对象
-            // 分类
-            const songsList: { [key in Schema.vendor]: Array<RequestParams.collects> } = {
-                [vendor.netease]: [],
-                [vendor.xiami]: [],
-                [vendor.qq]: [],
-            }
-            collects.forEach(item => {
-                songsList[item.vendor].push({
-                    id: item.id,
-                    vendor: item.vendor,
-                })
-            })
-            const getDetail = async (vendor: Schema.vendor, ids: number[]) => {
-                const data = await musicApi.getBatchSongDetail(vendor, ids)
-                if (data.status) {
-                    // 成功拿到歌曲信息
-                    data.data.forEach((item: musicInfo) => {
-                        collectsDetailObject[item.id] = item
-                    })
-                }
-            }
-            for (let key of Object.keys(songsList)) {
-                const _key = key as vendor
-                const list = songsList[_key]
-                if (!list.length) continue
-                if (_key === vendor.qq) {
-                    let arr: number[] = []
-                    for (let index = 0; index < list.length; index++) {
-                        arr.push(list[index].id)
-                        if (arr.length === 50 || index + 1 === list.length) {
-                            // 每50首更新一次
-                            await getDetail(_key, arr)
-                            arr = []
-                        }
-                    }
-                } else {
-                    await getDetail(_key, list.map(item => item.id))
-                }
-            }
-            // 批量插入
-            for (let item of collects) {
-                let info = collectsDetailObject[item.id]
-                if (!info) {
-                    // 未拿到歌曲信息
-                    // 如果是QQ音乐 调用单个获取信息的接口 有返回代表QQ音乐把歌曲id都换了！没有则代表id有误 跳过
-                    if (item.vendor === 'qq') {
-                        const singleInfo = await musicApi.getSongDetail(item.vendor, item.id)
-                        if (singleInfo.status) {
-                            info = singleInfo.data
-                        } else {
-                            failedList.push({ id: item.id, msg: 'id有误' })
-                            continue
-                        }
-                    } else {
-                        // 其他平台暂未发现会换id 直接代表id有误 跳过
-                        failedList.push({ id: item.id, msg: 'id有误' })
-                        continue
-                    }
+            console.time('耗时')
+            for (let i in songs) {
+                console.log(i)
+                const song = songs[i]
+                if (!song) {
+                    failedList.push({ id: collects[i].id, msg: 'id有误' })
+                    continue
                 }
                 try {
                     await models.sequelize.transaction((t: any) => {
                         const where = {
-                            songId: info.id.toString(),
-                            vendor: item.vendor,
+                            songId: song.id.toString(),
+                            vendor: collects[i].vendor,
                         }
                         const defaults = {
-                            name: info.name,
-                            album: info.album,
-                            artists: info.artists,
-                            cp: info.cp,
+                            name: song.name,
+                            album: song.album,
+                            artists: song.artists,
+                            cp: song.cp,
                         }
                         // 更新或插入 song表
                         return models.song
@@ -388,12 +338,13 @@ export default express()
                 } catch (e) {
                     console.warn(e)
                     if (e.errors && e.errors[0] && e.errors[0].type === 'unique violation') {
-                        failedList.push({ id: info.id, msg: '歌曲已存在！' })
+                        failedList.push({ id: song.id, msg: '歌曲已存在！' })
                     } else {
-                        failedList.push({ id: info.id, msg: '添加失败', log: e })
+                        failedList.push({ id: song.id, msg: '添加失败', log: e })
                     }
                 }
             }
+            console.timeEnd('耗时')
             res.send({
                 failedList,
             })
