@@ -8,6 +8,7 @@
       "env": {
         "NODE_ENV": "production"
       },
+      "max_memory_restart": "600M",
       "wait_ready": true,
       "interpreter": "./node_modules/.bin/ts-node",
       "interpreter_args": "-r tsconfig-paths/register"
