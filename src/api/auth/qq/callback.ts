@@ -21,11 +21,16 @@ router.get('/', passport.authenticate('qq'), async (req, res, next) => {
         sourceData: data,
         from: 'qq',
     })
-    res.send({
-        token: generateToken(info.id),
-        nickname: info.nickname,
-        avatar: info.avatar,
-    })
+    const token = generateToken(info.id)
+    res
+        .cookie('accesstoken', token, {
+            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        })
+        .send({
+            token,
+            nickname: info.nickname,
+            avatar: info.avatar,
+        })
 })
 
 export default router
