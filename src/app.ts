@@ -1,11 +1,11 @@
 import express from '@libs/express'
 import session from 'express-session'
 import bodyParser from 'body-parser'
-import redis from 'socket.io-redis'
+// import redis from 'socket.io-redis'
 import config from 'config'
 import middleware from './middleware'
-import socketIO from 'socket.io'
-import initSocket from './socket'
+// import socketIO from 'socket.io'
+// import initSocket from './socket'
 
 const app = express()
 const serverConfig: Config.server = config.get('server')
@@ -21,11 +21,11 @@ app.use(middleware)
 
 const expressServer = require('http').createServer(app)
 const socketServer = require('http').createServer()
-const io = socketIO(socketServer)
+// const io = socketIO(socketServer)
 
-io.adapter(redis({ host: 'localhost', port: 6379 }))
+// io.adapter(redis({ host: 'localhost', port: 6379 }))
 
-initSocket(io)
+// initSocket(io)
 
 process.on('SIGINT', function() {
     expressServer.close(function(err: any) {
