@@ -6,10 +6,11 @@ module.exports = {
         socket: 8081
     },
     sequelize: {
-        host: "127.0.0.1",
-        database: "database",
-        username: "username",
-        password: "password",
+        host: process.env.APP_MYSQL_HOST || "127.0.0.1",
+        port: process.env.APP_MYSQL_PORT || 3306,
+        database: process.env.APP_MYSQL_DATABASE || "database",
+        username: process.env.APP_MYSQL_USER || "username",
+        password: process.env.APP_MYSQL_PASSWORD || "password",
         dialect: "mysql",
         pool: {
             max: 5,
@@ -33,7 +34,7 @@ module.exports = {
     weiboStrategyOption: {
         clientID: 100000,
         clientSecret: "clientSecret",
-        callbackURL: "https://127.0.0.1:8080/auth/qq/callback"
+        callbackURL: "https://127.0.0.1:8080/auth/weibo/callback"
     },
     email: {
         transporter: {
@@ -58,8 +59,6 @@ module.exports = {
         port: 8338,
         secret: 'webhook'
     },
-    blacklist: [
-        100
-    ],
+    blacklist: [],
     administrators: []
 }

@@ -1,0 +1,38 @@
+version: '3'
+services:
+
+  redis:
+    image: redis:3
+    restart: always
+    volumes:
+      - "./redis:/data"
+
+  mysql:
+    image: mysql:5.7
+    restart: always
+    volumes:
+      - "./mysql:/var/lib/mysql"
+    environment:
+      MYSQL_DATABASE: musiclake
+      MYSQL_USER: musiclake
+      MYSQL_PASSWORD: musiclake
+      MYSQL_ROOT_PASSWORD: musiclake
+
+  server:
+    build: .
+    environment:
+      APP_REDIS_HOST: redis
+      APP_MYSQL_HOST: mysql
+      APP_MYSQL_DATABASE: musiclake
+      APP_MYSQL_USER: musiclake
+      APP_MYSQL_PASSWORD: musiclake
+    restart: always
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+      - redis
+      - mysql
+    volumes:
+      - "./wait-for-it.sh:/app/wait-for-it.sh"
+    command: ["./wait-for-it.sh", "-t", "0", "mysql:3306", "--", "npm", "start"]

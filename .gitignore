@@ -2,6 +2,7 @@ node_modules/
 .idea/
 dist/
 config/local.js
+config/docker.js
 package-lock.json
 yarn.lock
 .DS_Store
@@ -9,3 +10,5 @@ yarn.lock
 yarn-error.log
 pm2.json
 src/control.ts
+mysql
+redis
