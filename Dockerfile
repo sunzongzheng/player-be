@@ -5,7 +5,7 @@ ENV NODE_ENV production
 
 WORKDIR ${APP_ROOT}
 
-COPY package.json package-lock.json tsconfig.json ${APP_ROOT}/
+COPY package.json tsconfig.json ${APP_ROOT}/
 
 COPY config ${APP_ROOT}/config/
 
