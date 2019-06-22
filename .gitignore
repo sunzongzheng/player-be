@@ -3,6 +3,7 @@ node_modules/
 dist/
 config/local.js
 config/docker.js
+config/development.js
 package-lock.json
 yarn.lock
 .DS_Store

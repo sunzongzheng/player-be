@@ -2,8 +2,8 @@
 用以支撑音乐湖云歌单
 
 ## 开发
-1. `cp config/default.js config/local.js`
-2. 修改config/local.js相应配置
+1. `cp config/default.js config/development.js`
+2. 修改config/development.js相应配置
 2. `npm install`
 3. `npm run start`
 
