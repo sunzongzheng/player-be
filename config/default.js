@@ -36,6 +36,11 @@ module.exports = {
         clientSecret: "clientSecret",
         callbackURL: "https://127.0.0.1:8080/auth/weibo/callback"
     },
+    githubStrategyOption: {
+        clientID: 'clientID',
+        clientSecret: "clientSecret",
+        callbackURL: "https://127.0.0.1:8080/auth/github/callback"
+    },
     email: {
         transporter: {
             host: "smtp.163.com",
