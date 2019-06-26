@@ -9,10 +9,13 @@ const router = express()
 const noPermissionList = [
     '/auth/qq',
     '/auth/weibo',
+    '/auth/github',
     '/auth/qq/callback',
     '/auth/weibo/callback',
+    '/auth/github/callback',
     '/auth/qq/android',
     '/auth/weibo/android',
+    '/auth/github/android',
     '/music/netease/rank',
     '/music/qq/rank',
     '/statistics',

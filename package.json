@@ -51,6 +51,7 @@
         "mysql2": "^1.4.2",
         "nodemailer": "^4.4.2",
         "passport": "^0.4.0",
+        "passport-github2": "^0.1.11",
         "passport-qq": "^0.1.0",
         "passport-weibo": "^0.1.2",
         "platform": "^1.3.5",
@@ -59,8 +60,8 @@
         "socket.io": "^2.1.1",
         "socket.io-redis": "^5.2.0",
         "ts-node": "^5.0.1",
-        "typescript": "^2.8.1",
-        "tsconfig-paths": "^3.2.0"
+        "tsconfig-paths": "^3.2.0",
+        "typescript": "^2.8.1"
     },
     "devDependencies": {
         "mocha": "^5.0.5",

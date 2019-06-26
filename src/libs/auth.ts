@@ -76,6 +76,7 @@ export async function authWrite(req: express.Request, options: OPTIONS): Promise
     const meta: { [key: string]: string } = {
         qq: 'QQ',
         weibo: '微博',
+        github: 'github'
     }
     const from = meta[info.from]
     // 邮件推送

@@ -9,7 +9,7 @@ export default (sequelize: Sequelize.Sequelize) => {
                 comment: '用户ID',
             },
             from: {
-                type: Sequelize.ENUM('qq', 'token', 'weibo'),
+                type: Sequelize.ENUM('qq', 'token', 'weibo', 'github'),
                 comment: '登录方式',
             },
             platform: {

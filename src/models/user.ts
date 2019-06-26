@@ -23,7 +23,7 @@ export default (sequelize: Sequelize.Sequelize) => {
                 type: Sequelize.JSON,
             },
             from: {
-                type: Sequelize.ENUM('qq', 'weibo'),
+                type: Sequelize.ENUM('qq', 'weibo', 'github'),
             },
         },
         {
