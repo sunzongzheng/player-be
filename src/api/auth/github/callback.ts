@@ -17,10 +17,14 @@ router.get('/', passport.authenticate('github'), async (req, res, next) => {
         from: 'github',
     })
     const accesstoken = generateToken(info.id)
-    res.cookie('accesstoken', accesstoken, {
-        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    })
-    res.send('登录成功')
+    if(req.query.open_client) {
+        res.redirect(302, `musiclake://oauth?accesstoken=${accesstoken}`)
+    } else {
+        res.cookie('accesstoken', accesstoken, {
+            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        })
+        res.send('登录成功')
+    }
 })
 
 export default router

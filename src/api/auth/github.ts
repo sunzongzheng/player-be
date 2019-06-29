@@ -5,7 +5,13 @@ import android from './github/android'
 
 const router = express()
 
-router.get('/', passport.authenticate('github'), (req, res) => {})
+router.get('/', (req, res, next) => {
+    if(req.query.open_client) {
+        passport.authenticate('github-open-client')(req, res, next)
+    } else {
+        passport.authenticate('github')(req, res, next)
+    }
+})
 router.use('/callback', callback)
 router.use('/android', android)
 

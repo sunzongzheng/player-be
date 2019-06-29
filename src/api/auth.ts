@@ -19,7 +19,10 @@ const serializeUser = (user: any, done: Function) => {
 
 passport.serializeUser(serializeUser)
 passport.deserializeUser(serializeUser)
+
+// QQ
 passport.use(
+    'qq',
     new qqStrategy(qqStrategyOption, async (accessToken, refreshToken, profile, done) => {
         // 获取unionID
         const data = await axios.get(`https://graph.qq.com/oauth2.0/me?access_token=${accessToken}&unionid=1`)
@@ -31,15 +34,53 @@ passport.use(
     })
 )
 passport.use(
+    'qq-open-client',
+    new qqStrategy({
+        ...qqStrategyOption,
+        callbackURL: qqStrategyOption.callbackURL + '?open_client=true'
+    }, async (accessToken, refreshToken, profile, done) => {
+        // 获取unionID
+        const data = await axios.get(`https://graph.qq.com/oauth2.0/me?access_token=${accessToken}&unionid=1`)
+        const info = eval(`function callback(val){return val} ${data.data}`)
+        done(null, {
+            ...profile,
+            unionid: info.unionid,
+        })
+    })
+)
+// 微博
+passport.use(
+    'weibo',
     new WeiboStrategy(weiboStrategyOption, async (accessToken, refreshToken, profile, done) => {
         done(null, profile)
     })
 )
 passport.use(
+    'weibo-open-client',
+    new WeiboStrategy({
+        ...weiboStrategyOption,
+        callbackURL: weiboStrategyOption.callbackURL + '?open_client=true'
+    }, async (accessToken, refreshToken, profile, done) => {
+        done(null, profile)
+    })
+)
+// Github
+passport.use(
+    'github',
     new GitHubStrategy(githubStrategyOption, async (accessToken, refreshToken, profile, done) => {
         done(null, profile)
     })
 )
+passport.use(
+    'github-open-client',
+    new GitHubStrategy({
+        ...githubStrategyOption,
+        callbackURL: githubStrategyOption.callbackURL + '?open_client=true'
+    }, async (accessToken, refreshToken, profile, done) => {
+        done(null, profile)
+    })
+)
+
 router.use(passport.initialize())
 router.use(passport.session())
 router.use('/qq', qq)

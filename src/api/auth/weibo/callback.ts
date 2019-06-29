@@ -16,10 +16,15 @@ router.get('/', passport.authenticate('weibo'), async (req, res, next) => {
         sourceData: data,
         from: 'weibo',
     })
-    res.cookie('accesstoken', generateToken(info.id), {
-        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    })
-    res.send('登录成功')
+    const accesstoken = generateToken(info.id)
+    if(req.query.open_client) {
+        res.redirect(302, `musiclake://oauth?accesstoken=${accesstoken}`)
+    } else {
+        res.cookie('accesstoken', accesstoken, {
+            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        })
+        res.send('登录成功')
+    }
 })
 
 export default router
