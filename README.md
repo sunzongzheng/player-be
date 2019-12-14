@@ -1,15 +1,19 @@
 # player-be [![Build Status](https://travis-ci.org/sunzongzheng/player-be.svg?branch=master)](https://travis-ci.org/sunzongzheng/player-be)
 用以支撑音乐湖云歌单
 
+## 环境要求
+- mysql >= 5.7.8
+- redis
+
 ## 开发
-1. `cp config/default.js config/development.js`
-2. 修改config/development.js相应配置
+1. `cp config/default.js config/local.js`
+2. 修改config/local.js相应配置
 2. `npm install`
 3. `npm run start`
 
 ## 部署
-1. `cp config/default.js config/production.js`
-2. 修改`config/production.js`相应配置
+1. `cp config/default.js config/local.js`
+2. 修改`config/local.js`相应配置
 3. 以下三种方式任选一
     ````bash
     docker-compose up -d # Docker Compose（Recommended）
