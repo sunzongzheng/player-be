@@ -125,12 +125,12 @@ $ vim config/local.js
 以下为示例配置，要修改的点为：
 1. server的port和socket：默认为8080、8081，如果8080端口没有被占用则无需更改
 2. sequelize部分（数据库）：
-  1. database的名字，改为你创建的数据库的名字
-  2. username，改为某个用户名
-  3. password，改为对应的用户密码
+  * atabase的名字，改为你创建的数据库的名字
+  * username，改为某个用户名
+  * password，改为对应的用户密码
 3. githubStrategyOption：
-  1. clientID、clientSecret，改为Github APP注册后对应的信息
-  2. callbackURL，改为http://xx.xx.xx.xx:port/auth/github/callback格式，其中xx.xx.xx.xx是你的服务器公网地址（如果你服务器是内网，那内网地址也可），和Github APP的User authorization callback URL保持一致即可
+  * clientID、clientSecret，改为Github APP注册后对应的信息
+  * callbackURL，改为http://xx.xx.xx.xx:port/auth/github/callback格式，其中xx.xx.xx.xx是你的服务器公网地址（如果你服务器是内网，那内网地址也可），和Github APP的User authorization callback URL保持一致即可
 
 以下配置：
 1. 端口和socket改为了12345和12346
