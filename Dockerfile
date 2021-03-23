@@ -7,11 +7,11 @@ WORKDIR ${APP_ROOT}
 
 COPY package.json tsconfig.json ${APP_ROOT}/
 
-COPY config ${APP_ROOT}/config/
+RUN npm i
 
 COPY src ${APP_ROOT}/src/
 
-RUN npm i
+COPY config ${APP_ROOT}/config/
 
 EXPOSE 8080 8081
 
