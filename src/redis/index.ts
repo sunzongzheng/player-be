@@ -1,17 +1,18 @@
-import redis from 'redis'
-import { promisify } from 'util'
+import LocalCache from "@src/redis/LocalCache";
+import RedisCache from "@src/redis/RedisCache";
 
-const client = redis.createClient({
-    host: process.env.APP_REDIS_HOST,
-    port: process.env.APP_REDIS_PORT ? parseInt(process.env.APP_REDIS_PORT) : 6379,
-})
-
-client.on('error', err => {
-    console.log('Redis error ' + err)
-})
+const {get, set, client} = (() => {
+    // Use RAM as cache if there is no Redis
+    if (process.env.APP_REDIS_HOST) {
+        return new RedisCache();
+    } else {
+        console.log(`Tip: set APP_REDIS_HOST and APP_REDIS_PORT to use Redis as cache.`);
+        return new LocalCache();
+    }
+})();
 
 export default {
-    get: promisify(client.get).bind(client),
-    set: promisify(client.set).bind(client),
+    get,
+    set,
     raw: client,
 }
