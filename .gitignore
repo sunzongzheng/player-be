@@ -12,4 +12,3 @@ yarn-error.log
 pm2.json
 src/control.ts
 mysql
-redis
