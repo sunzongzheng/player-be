@@ -28,9 +28,9 @@
 github在setting -> Developer settings -> New Github App注册。QQ、微博创建应用都要域名备案，github不用。
 创建完应用记得修改配置文件
 
-### 2.问：没有条件搭建数据库怎么办?
+### 2.问：没有条件搭建数据库、想使用其他数据库怎么办?
    
-答：可以使用Sqlite，本项目使用Sequelize ORM v4，支持多种数据库（[请查看Sequelize官方文档了解如何配置其他数据库](https://sequelize.org/v4/manual/installation/usage.html)）。
+答：没有条件搭建数据库可以使用Sqlite，本项目使用Sequelize ORM v4，支持多种数据库（[请查看Sequelize官方文档了解如何配置其他数据库](https://sequelize.org/v4/manual/installation/usage.html)）。
 
 Sqlite是一种基于文件的数据库方案，不需要单独搭建数据库服务，配置方法如下：
 
