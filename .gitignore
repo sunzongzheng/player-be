@@ -13,3 +13,4 @@ pm2.json
 src/control.ts
 mysql
 redis
+.sqlite
